@@ -119,10 +119,6 @@
 
         .alert-warning { background-color: #fff3cd; color: #856404; padding: 15px 20px; border-left: 5px solid #ffeeba; border-radius: 6px; margin-bottom: 20px; display: none; font-size: 15px; }
         .alert-info { background-color: #d1ecf1; color: #0c5460; padding: 15px 20px; border-left: 5px solid #bee5eb; border-radius: 6px; margin-bottom: 20px; display: none; font-size: 15px; }
-        
-        /* Hidden Admin Trigger */
-        .admin-trigger { position: fixed; bottom: 10px; right: 10px; opacity: 0.1; cursor: pointer; font-size: 12px; padding: 10px; z-index: 100; transition: opacity 0.3s; }
-        .admin-trigger:hover { opacity: 0.5; }
     </style>
 </head>
 <body>
@@ -138,10 +134,11 @@
     </header>
 
     <div class="container">
+        <!-- Main Navigation with CRC Login added back -->
         <div class="nav-buttons">
             <button id="btnHome" class="active" onclick="showSection('welcome')">🏠 स्वागत</button>
             <button id="btnSchoolLogin" onclick="showSection('schoolLogin')">🔑 शाळा लॉगिन</button>
-            <!-- CRC Login button removed from main nav to hide it -->
+            <button id="btnCrcLogin" onclick="showSection('crcLogin')">🛡️ प्रशासन (CRC) लॉगिन</button>
         </div>
 
         <!-- 1. Welcome Section -->
@@ -239,7 +236,7 @@
             </div>
         </div>
 
-        <!-- 4. CRC Login (Hidden from main navigation) -->
+        <!-- 4. CRC Login -->
         <div id="crcLogin" class="section login-box">
             <h3>🛡️ प्रशासन (Admin) लॉगिन</h3>
             <div class="form-card" style="border-left-color: #2d3436;">
@@ -338,9 +335,6 @@
         </div>
     </div>
 
-    <!-- Hidden Trigger for Admin Login -->
-    <div class="admin-trigger" onclick="showSection('crcLogin')" title="Admin Access">🔒</div>
-
     <script>
         // === इथे तुमची Google Apps Script Web App URL टाका ===
         const scriptURL = "https://script.google.com/macros/s/AKfycbwJJj0sNV41jBF8tMrT7bf7Sx4G0DZYi6PNQhuGA_yKp_HyqycP4GjEEhKQD569FA61qQ/exec"; 
@@ -405,6 +399,7 @@
             
             if(sectionId === 'welcome') document.getElementById('btnHome').classList.add('active');
             if(sectionId === 'schoolLogin') document.getElementById('btnSchoolLogin').classList.add('active');
+            if(sectionId === 'crcLogin') document.getElementById('btnCrcLogin').classList.add('active');
             
             document.getElementById('previewArea').style.display = 'none';
             
@@ -857,4 +852,4 @@
         }
     </script>
 </body>
-</html>
+</html> form madhe 2 new rakanr wadhvayche ahet ,udise chya war केंद्र :पिंपळगाव aani  prakar ase don rakane havet  prakar madheZP ,Aided aani  Unaided havet yatil jo prakar shalemadhe yet asel to apap form varun gheil aani print madhe pan gheil krupya navin html aani google app scrip dya
