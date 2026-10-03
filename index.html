@@ -29,7 +29,7 @@
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Form Card Styles (New Look) */
+        /* Form Card Styles */
         .form-card { 
             background: #fff; 
             padding: 18px 20px; 
@@ -65,27 +65,47 @@
         .btn-success:hover { background-color: #218838; transform: translateY(-1px); }
         .btn-primary { background-color: #0056b3; box-shadow: 0 4px 10px rgba(0, 86, 179, 0.3); }
         .btn-primary:hover { background-color: #004494; transform: translateY(-1px); }
-        .btn-secondary { background-color: #6c757d; }
-        .btn-secondary:hover { background-color: #5a6268; }
         .btn-danger { background-color: #dc3545; color: white; border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer; font-size: 14px; transition: 0.2s; }
         .btn-danger:hover { background-color: #c82333; }
-        .btn-warning { background-color: #ffc107; color: #212529; box-shadow: 0 4px 10px rgba(255, 193, 7, 0.3); }
-        .btn-warning:hover { background-color: #e0a800; transform: translateY(-1px); }
         .btn-action { width: auto; display: inline-flex; align-items: center; gap: 5px; margin: 5px; padding: 8px 15px; font-size: 14px; border-radius: 20px; background-color: #f8f9fa; color: #333; border: 1px solid #ced4da; font-weight: normal;}
         .btn-action:hover { background-color: #e2e6ea; }
 
-        /* School Info Display (Centered) */
+        /* School Info Display */
         .school-info-banner {
-            background: linear-gradient(to right, #e8f4f8, #f0f8e8);
-            padding: 15px;
-            border-radius: 8px;
+            background: linear-gradient(135deg, #e8f4f8, #f0f8e8);
+            padding: 20px;
+            border-radius: 10px;
             text-align: center;
             border: 1px solid #d1e7dd;
             margin-bottom: 25px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            position: relative;
         }
-        .school-info-banner .udise-text { font-size: 18px; color: #555; margin-bottom: 5px; }
-        .school-info-banner .school-name-text { font-size: 22px; font-weight: bold; color: #0056b3; margin: 0; }
+        .school-info-banner .kendra-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffc107;
+            color: #000;
+            padding: 4px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .school-info-banner .type-badge {
+            background: #6c5ce7;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        .school-info-banner .udise-text { font-size: 16px; color: #555; margin-bottom: 8px; margin-top: 10px;}
+        .school-info-banner .school-name-text { font-size: 24px; font-weight: 800; color: #0056b3; margin: 0; text-shadow: 1px 1px 0px rgba(255,255,255,0.8); }
         
         /* Table Styles */
         .table-responsive { overflow-x: auto; margin-top: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
@@ -97,12 +117,44 @@
         
         .login-box { max-width: 450px; margin: 40px auto; padding: 30px; background: #fff; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         
+        /* Colorful CRC Login Box */
+        .crc-login-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            color: white;
+            text-align: center;
+        }
+        .crc-login-container h3 { color: white; border-bottom: none; font-size: 28px; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .crc-login-container .form-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-left: none;
+            color: white;
+        }
+        .crc-login-container .form-card label { color: #f8f9fa; font-weight: normal; letter-spacing: 1px;}
+        .crc-login-container input {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .crc-login-container .btn-primary {
+            background: #ff7675;
+            background: linear-gradient(to right, #ff7675, #d63031);
+            border: none;
+            font-size: 18px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(214, 48, 49, 0.4);
+        }
+        .crc-login-container .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(214, 48, 49, 0.6); }
+
         /* Badges */
         .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; display: inline-block; }
         .status-submitted { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         .status-locked { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
         .status-pending { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
-        .status-requested { background-color: #cce5ff; color: #004085; border: 1px solid #b8daff; }
 
         #previewArea { background: #e8f4f8; padding: 20px; border-radius: 8px; margin-top: 20px; display: none; border: 1px solid #bee5eb; }
         
@@ -118,7 +170,6 @@
         .progress-label { font-size: 13px; color: #7f8c8d; font-weight: 600; text-transform: uppercase; }
 
         .alert-warning { background-color: #fff3cd; color: #856404; padding: 15px 20px; border-left: 5px solid #ffeeba; border-radius: 6px; margin-bottom: 20px; display: none; font-size: 15px; }
-        .alert-info { background-color: #d1ecf1; color: #0c5460; padding: 15px 20px; border-left: 5px solid #bee5eb; border-radius: 6px; margin-bottom: 20px; display: none; font-size: 15px; }
     </style>
 </head>
 <body>
@@ -134,7 +185,7 @@
     </header>
 
     <div class="container">
-        <!-- Main Navigation with CRC Login added back -->
+        <!-- Main Navigation -->
         <div class="nav-buttons">
             <button id="btnHome" class="active" onclick="showSection('welcome')">🏠 स्वागत</button>
             <button id="btnSchoolLogin" onclick="showSection('schoolLogin')">🔑 शाळा लॉगिन</button>
@@ -169,13 +220,10 @@
                 <strong>⚠️ सूचना:</strong> तुम्ही या महिन्याची माहिती आधीच भरली आहे. तुम्ही फक्त एकदाच माहिती भरू शकता.
             </div>
 
-            <div id="editRequestAlert" class="alert-info">
-                <strong>📩 विनंती पाठवली:</strong> माहिती बदलण्याची विनंती प्रशासनाला पाठवली आहे. प्रशासनाने ती स्वीकारल्यावर तुम्ही नवीन माहिती भरू शकाल.
-            </div>
-
-            <!-- Centered School Information Banner -->
+            <!-- Enhanced Centered School Information Banner -->
             <div class="school-info-banner">
-                <div class="udise-text">🔢 UDISE: <b id="currentUdise"></b></div>
+                <div class="kendra-badge">📍 केंद्र: पिंपळगाव</div>
+                <div class="udise-text">🔢 UDISE: <b id="currentUdise"></b> <span id="currentTypeBadge" class="type-badge"></span></div>
                 <h3 class="school-name-text" id="currentSchoolName"></h3>
             </div>
             
@@ -226,7 +274,6 @@
                 </div>
 
                 <button class="btn btn-primary" id="btnPreview" onclick="previewData()">👀 माहिती तपासा (Preview)</button>
-                <button class="btn btn-warning" id="btnRequestEdit" onclick="requestEdit()" style="display: none;">✏️ माहिती बदलण्यासाठी विनंती करा</button>
             </div>
 
             <div id="previewArea">
@@ -236,19 +283,23 @@
             </div>
         </div>
 
-        <!-- 4. CRC Login -->
-        <div id="crcLogin" class="section login-box">
-            <h3>🛡️ केंद्र समन्वयक  (Admin) लॉगिन</h3>
-            <div class="form-card" style="border-left-color: #2d3436;">
-                <label>Admin ID 👤</label>
-                <input type="text" id="loginCrcId">
+        <!-- 4. CRC Login (Colorful UI) -->
+        <div id="crcLogin" class="section login-box" style="background: transparent; box-shadow: none;">
+            <div class="crc-login-container">
+                <h3>🛡️ प्रशासन लॉगिन</h3>
+                <p style="margin-top:-15px; margin-bottom:25px; font-size:14px; opacity:0.8;">केवळ केंद्र समन्वयक (CRC) वापरासाठी</p>
+                
+                <div class="form-card">
+                    <label>Admin ID 👤</label>
+                    <input type="text" id="loginCrcId" placeholder="ID टाका">
+                </div>
+                <div class="form-card">
+                    <label>Password 🔐</label>
+                    <input type="password" id="loginCrcPass" placeholder="Password टाका">
+                </div>
+                <button class="btn btn-primary" onclick="loginCrc()">लॉगिन करा 🔓</button>
+                <p id="crcLoginError" style="color:#ffcccc; display:none; margin-top:15px; text-align: center; font-weight:bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">❌ चुकीचा ID किंवा Password.</p>
             </div>
-            <div class="form-card" style="border-left-color: #2d3436;">
-                <label>Password 🔐</label>
-                <input type="password" id="loginCrcPass">
-            </div>
-            <button class="btn btn-primary" onclick="loginCrc()">लॉगिन करा 🔓</button>
-            <p id="crcLoginError" style="color:red; display:none; margin-top:10px; text-align: center;">❌ चुकीचा ID किंवा Password.</p>
         </div>
 
         <!-- 5. CRC Dashboard -->
@@ -316,6 +367,7 @@
                         <tr>
                             <th>🔢 UDISE</th>
                             <th style="min-width: 150px;">🏫 शाळेचे नाव</th>
+                            <th>प्रकार</th>
                             <th>📅 महिना</th>
                             <th>📱 मोबाईल</th>
                             <th title="मागील प्रलंबित">⏳ मागील प्र.</th>
@@ -324,7 +376,7 @@
                             <th>🚪 TC</th>
                             <th title="शेवटी प्रलंबित">📌 शेवटी प्र.</th>
                             <th>स्थिती</th>
-                            <th style="min-width: 100px;">⚙️ कृती (Action)</th>
+                            <th style="min-width: 60px;">⚙️ कृती</th>
                         </tr>
                     </thead>
                     <tbody id="crcTableBody">
@@ -340,17 +392,18 @@
         const scriptURL = "https://script.google.com/macros/s/AKfycbwJJj0sNV41jBF8tMrT7bf7Sx4G0DZYi6PNQhuGA_yKp_HyqycP4GjEEhKQD569FA61qQ/exec"; 
         // ====================================================
 
+        // School Database with Types
         const schoolsDB = {
-            "27100503201": "जि.प.केंद्रीय प्राथमिक शाळा पिंपळगाव",
-            "27100503202": "जि.प. हायस्कूल तथा कनिष्ठ महाविद्यालय पिंपळगाव",
-            "27100503203": "जि.प. शिवाजी प्राथमिक शाळा पिंपळगाव",
-            "27100503204": "स्नेह कन्या विद्यालय पिंपळगाव",
-            "27100503205": "स्कायवर्ड्स इंटरनॅशनल स्कूल पिंपळगाव",
-            "27100503301": "जि.प. उच्च प्राथमिक शाळा रेंगेपार (कोहली)",
-            "27100503401": "जि.प. प्राथमिक शाळा सामेवाडा",
-            "27100503501": "जि.प. प्राथमिक शाळा खैरी",
-            "27100503601": "जि.प. उच्च प्राथमिक शाळा मिरेगाव",
-            "27100503602": "शुक्राचार्य विद्यालय मिरेगाव"
+            "27100503201": { name: "जि.प.केंद्रीय प्राथमिक शाळा पिंपळगाव", type: "ZP" },
+            "27100503202": { name: "जि.प. हायस्कूल तथा कनिष्ठ महाविद्यालय पिंपळगाव", type: "ZP" },
+            "27100503203": { name: "जि.प. शिवाजी प्राथमिक शाळा पिंपळगाव", type: "ZP" },
+            "27100503204": { name: "स्नेह कन्या विद्यालय पिंपळगाव", type: "Aided" },
+            "27100503205": { name: "स्कायवर्ड्स इंटरनॅशनल स्कूल पिंपळगाव", type: "Unaided" },
+            "27100503301": { name: "जि.प. उच्च प्राथमिक शाळा रेंगेपार (कोहली)", type: "ZP" },
+            "27100503401": { name: "जि.प. प्राथमिक शाळा सामेवाडा", type: "ZP" },
+            "27100503501": { name: "जि.प. प्राथमिक शाळा खैरी", type: "ZP" },
+            "27100503601": { name: "जि.प. उच्च प्राथमिक शाळा मिरेगाव", type: "ZP" },
+            "27100503602": { name: "शुक्राचार्य विद्यालय मिरेगाव", type: "Aided" }
         };
 
         const marathiMonths = ["जानेवारी", "फेब्रुवारी", "मार्च", "एप्रिल", "मे", "जून", "जुलै", "ऑगस्ट", "सप्टेंबर", "ऑक्टोबर", "नोव्हेंबर", "डिसेंबर"];
@@ -360,7 +413,6 @@
         let currentSchool = null;
         let globalActiveMonth = ""; 
         let syncInterval = null;
-        let currentEntryId = null;
 
         function initDropdowns() {
             let filterSelect = document.getElementById("filterMonth");
@@ -442,6 +494,7 @@
                 id: Date.now().toString(),
                 udise: currentSchool.udise,
                 schoolName: currentSchool.name,
+                schoolType: currentSchool.type, // Sending School Type to backend
                 year: document.getElementById('formYear').value,
                 month: document.getElementById('formMonth').value,
                 mobile: document.getElementById('formMobile').value,
@@ -449,8 +502,7 @@
                 bonafide: document.getElementById('formBonafide').value,
                 marklist: document.getElementById('formMarklist').value,
                 tc: document.getElementById('formTc').value,
-                pendingEnd: document.getElementById('formPendingEnd').value,
-                editRequest: false // New field
+                pendingEnd: document.getElementById('formPendingEnd').value
             };
 
             let payload = { action: "submit", data: entry };
@@ -465,49 +517,6 @@
                     showSection('welcome');
                 } else {
                     alert("त्रुटी: " + (result.message || "Unknown error") + " ❌");
-                }
-            } catch (e) {
-                alert("सर्व्हरशी संपर्क होऊ शकला नाही. 🌐❌");
-            }
-            showLoading(false);
-        }
-
-        async function requestEdit() {
-            if(!currentEntryId) return;
-            if(!confirm("तुम्हाला खात्री आहे का की माहिती बदलण्याची विनंती पाठवायची आहे? प्रशासनाने विनंती स्वीकारल्यावर तुम्ही नवीन माहिती भरू शकाल. 🤔")) return;
-            
-            let payload = { action: "requestEdit", rowId: currentEntryId };
-            showLoading(true);
-            try {
-                let response = await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
-                let result = await response.json();
-                if(result.status === "success") {
-                    alert("तुमची माहिती बदलण्याची विनंती प्रशासनाला पाठवण्यात आली आहे. 📩");
-                    fetchDataFromAPI(); // Refresh to show updated status
-                } else {
-                    alert("त्रुटी: " + result.message + " ❌");
-                }
-            } catch (e) {
-                alert("सर्व्हरशी संपर्क होऊ शकला नाही. 🌐❌");
-            }
-            showLoading(false);
-        }
-
-        async function approveEditRequest(entryId) {
-            if(!confirm("या शाळेची माहिती बदलण्याची विनंती स्वीकारायची आहे का? असे केल्यास त्यांची आधीची माहिती डिलीट होईल. 🗑️")) return;
-            
-            // Approving edit request means we delete the current entry so they can resubmit
-            let payload = { action: "reject", rowId: String(entryId) };
-            showLoading(true);
-            try {
-                let response = await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
-                let result = await response.json();
-                if(result.status === "success") {
-                    dbData = dbData.filter(d => String(d.id) !== String(entryId));
-                    renderCrcTable();
-                    alert("विनंती स्वीकारली गेली! आता शाळा नवीन माहिती भरू शकेल. ✅");
-                } else {
-                    alert("त्रुटी: " + result.message + " ❌");
                 }
             } catch (e) {
                 alert("सर्व्हरशी संपर्क होऊ शकला नाही. 🌐❌");
@@ -554,9 +563,22 @@
         function loginSchool() {
             let udise = document.getElementById('loginUdise').value.trim();
             if(schoolsDB[udise]) {
-                currentSchool = { udise: udise, name: schoolsDB[udise] };
+                currentSchool = { 
+                    udise: udise, 
+                    name: schoolsDB[udise].name,
+                    type: schoolsDB[udise].type 
+                };
+                
                 document.getElementById('currentUdise').innerText = udise;
-                document.getElementById('currentSchoolName').innerText = schoolsDB[udise];
+                document.getElementById('currentSchoolName').innerText = currentSchool.name;
+                
+                // Set Badge Colors based on type
+                let badge = document.getElementById('currentTypeBadge');
+                badge.innerText = currentSchool.type;
+                if(currentSchool.type === 'ZP') badge.style.backgroundColor = '#6c5ce7'; // Purple
+                if(currentSchool.type === 'Aided') badge.style.backgroundColor = '#00b894'; // Green
+                if(currentSchool.type === 'Unaided') badge.style.backgroundColor = '#e17055'; // Orange
+                
                 document.getElementById('schoolLoginError').style.display = 'none';
                 
                 fetchDataFromAPI(() => { 
@@ -579,8 +601,6 @@
             let existingEntry = dbData.find(d => d.udise === currentSchool.udise && String(d.year) === String(year) && d.month === month);
             
             document.getElementById('duplicateEntryAlert').style.display = 'none';
-            document.getElementById('editRequestAlert').style.display = 'none';
-            document.getElementById('btnRequestEdit').style.display = 'none';
             document.getElementById('btnPreview').style.display = 'block';
             
             if(lockedMonthsArray.includes(monthKey)) {
@@ -590,16 +610,8 @@
             }
 
             if(existingEntry) {
-                currentEntryId = existingEntry.id;
-                
-                if(existingEntry.editRequest) {
-                    document.getElementById('editRequestAlert').style.display = 'block';
-                } else {
-                    document.getElementById('duplicateEntryAlert').style.display = 'block';
-                    document.getElementById('btnRequestEdit').style.display = 'block';
-                }
-                
-                disableForm(""); // Just disable fields
+                document.getElementById('duplicateEntryAlert').style.display = 'block';
+                disableForm(""); 
                 document.getElementById('btnPreview').style.display = 'none';
                 
                 document.getElementById('formMobile').value = existingEntry.mobile;
@@ -609,7 +621,6 @@
                 document.getElementById('formTc').value = existingEntry.tc;
                 document.getElementById('formPendingEnd').value = existingEntry.pendingEnd;
             } else {
-                currentEntryId = null;
                 enableForm();
                 document.getElementById('formMobile').value = "";
                 document.getElementById('formPendingPrev').value = "0";
@@ -625,7 +636,6 @@
                 document.getElementById('duplicateEntryAlert').innerHTML = `<strong>⚠️ सूचना:</strong> ${message}`;
                 document.getElementById('duplicateEntryAlert').style.display = 'block';
             }
-            // We don't change opacity to 0.5 anymore so they can read what they submitted easily
             document.getElementById('formMobile').disabled = true;
             document.getElementById('formPendingPrev').disabled = true;
             document.getElementById('formBonafide').disabled = true;
@@ -659,6 +669,8 @@
             let month = document.getElementById('formMonth').value;
             
             let html = `<table style="width:100%; text-align:left; border:none; background:transparent;">
+                            <tr><td style="padding:5px; border:none;"><b>केंद्र:</b></td><td style="padding:5px; border:none;">पिंपळगाव</td></tr>
+                            <tr><td style="padding:5px; border:none;"><b>शाळेचा प्रकार:</b></td><td style="padding:5px; border:none;">${currentSchool.type}</td></tr>
                             <tr><td style="padding:5px; border:none;"><b>📅 वर्ष व महिना:</b></td><td style="padding:5px; border:none;">${month} ${year}</td></tr>
                             <tr><td style="padding:5px; border:none;"><b>📱 मोबाईल नंबर:</b></td><td style="padding:5px; border:none;">${document.getElementById('formMobile').value}</td></tr>
                             <tr><td style="padding:5px; border:none;"><b>⏳ मागील प्रलंबित:</b></td><td style="padding:5px; border:none; color:#dc3545; font-weight:bold;">${document.getElementById('formPendingPrev').value}</td></tr>
@@ -675,7 +687,7 @@
         function loginCrc() {
             let id = document.getElementById('loginCrcId').value;
             let pass = document.getElementById('loginCrcPass').value;
-            if(id === 'admin' && pass === '9999') {
+            if(id === 'admin' && pass === '1234') {
                 document.getElementById('crcLoginError').style.display = 'none';
                 showSection('crcDashboard');
                 fetchDataFromAPI(() => {
@@ -725,7 +737,11 @@
             let sortedUdise = Object.keys(schoolsDB).sort();
 
             sortedUdise.forEach(udise => {
-                let schoolName = schoolsDB[udise];
+                let schoolInfo = schoolsDB[udise];
+                let schoolName = schoolInfo.name;
+                // Use type from DB directly for consistency in UI even if not submitted
+                let schoolType = schoolInfo.type; 
+                
                 let submissionsForSchool = dbData.filter(d => d.udise === String(udise) && String(d.year) === String(fYear) && (fMonth === 'सर्व' || d.month === fMonth));
 
                 if(submissionsForSchool.length > 0) {
@@ -737,12 +753,6 @@
                         if (isLocked) {
                             statusHtml = `<span class="status-badge status-locked">🔒 Locked</span>`;
                             actionHtml = `<span style="font-size:12px; color:#999;">-</span>`;
-                        } else if (d.editRequest) {
-                            statusHtml = `<span class="status-badge status-requested">📩 Edit Requested</span>`;
-                            actionHtml = `
-                                <button class="btn-success" style="padding: 4px 8px; font-size: 12px; width:auto; margin:2px;" onclick="approveEditRequest('${d.id}')" title="विनंती स्वीकारून जुना डेटा डिलीट करा">✔ Approve</button>
-                                <button class="btn-danger" style="padding: 4px 8px; font-size: 12px; width:auto; margin:2px;" onclick="rejectEntry('${d.id}')" title="डिलीट करा">✖ Reject</button>
-                            `;
                         } else {
                             statusHtml = `<span class="status-badge status-submitted">✅ Submitted</span>`;
                             actionHtml = `<button class="btn-danger" style="padding: 4px 8px; font-size: 12px; width:auto;" onclick="rejectEntry('${d.id}')" title="डिलीट करा">✖ Reject</button>`;
@@ -751,6 +761,7 @@
                         let row = `<tr>
                             <td style="font-size:12px;">${d.udise}</td>
                             <td style="font-size:12px; text-align:left;"><b>${d.schoolName}</b></td>
+                            <td style="font-size:12px;">${d.schoolType || schoolType}</td>
                             <td>${d.month}</td>
                             <td style="font-size:12px;">${d.mobile}</td>
                             <td>${d.pendingPrev}</td>
@@ -765,7 +776,10 @@
                     });
                 } else if (fMonth !== 'सर्व') {
                     let row = `<tr style="background-color: #fffaf0; opacity: 0.7;">
-                        <td style="font-size:12px;">${udise}</td><td style="font-size:12px; text-align:left;">${schoolName}</td><td>${fMonth}</td>
+                        <td style="font-size:12px;">${udise}</td>
+                        <td style="font-size:12px; text-align:left;">${schoolName}</td>
+                        <td style="font-size:12px;">${schoolType}</td>
+                        <td>${fMonth}</td>
                         <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
                         <td><span class="status-badge status-pending">⏳ Pending</span></td>
                         <td>-</td>
@@ -775,7 +789,7 @@
             });
 
             if(tbody.innerHTML === '' && fMonth === 'सर्व') {
-                 tbody.innerHTML = `<tr><td colspan="11" style="padding: 30px; color: #777;">कोणतीही माहिती उपलब्ध नाही. 🚫</td></tr>`;
+                 tbody.innerHTML = `<tr><td colspan="12" style="padding: 30px; color: #777;">कोणतीही माहिती उपलब्ध नाही. 🚫</td></tr>`;
             }
 
             if(fMonth !== 'सर्व') {
@@ -811,7 +825,7 @@
         function exportExcel() {
             let table = document.getElementById("crcDataTable").cloneNode(true);
             for (let i = 0; i < table.rows.length; i++) {
-                table.rows[i].deleteCell(-1); 
+                table.rows[i].deleteCell(-1); // Remove Action column
             }
             let wb = XLSX.utils.table_to_book(table, {sheet:"Report"});
             XLSX.writeFile(wb, "Lokseva_Report.xlsx");
@@ -821,13 +835,14 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             doc.text("Lokseva Hakka Mahiti - Report", 14, 15);
+            doc.text("Kendra: Pimpalgaon", 14, 22); // Added Kendra Name in PDF
             
             doc.autoTable({ 
                 html: '#crcDataTable', 
-                startY: 20, 
+                startY: 28, 
                 theme: 'grid', 
                 styles: { font: 'helvetica', fontSize: 8 },
-                columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] 
+                columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] // Ensure Type column is included, exclude Action
             });
             doc.save("Lokseva_Report.pdf");
         }
@@ -840,7 +855,7 @@
                 try {
                     await navigator.share({
                         title: 'लोकसेवा हक्क माहिती अहवाल 📊',
-                        text: `${fMonth} ${fYear} चा लोकसेवा हक्क माहिती अहवाल पोर्टलवर उपलब्ध आहे. कृपया तपासा.`,
+                        text: `केंद्र पिंपळगाव: ${fMonth} ${fYear} चा लोकसेवा हक्क माहिती अहवाल पोर्टलवर उपलब्ध आहे. कृपया तपासा.`,
                         url: window.location.href
                     });
                 } catch (err) {
@@ -852,4 +867,4 @@
         }
     </script>
 </body>
-</html> form madhe 2 new rakanr wadhvayche ahet ,udise chya war केंद्र :पिंपळगाव aani  prakar ase don rakane havet  prakar madheZP ,Aided aani  Unaided havet yatil jo prakar shalemadhe yet asel to apap form varun gheil aani print madhe pan gheil krupya navin html aani google app scrip dya
+</html>
