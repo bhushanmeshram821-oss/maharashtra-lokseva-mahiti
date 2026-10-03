@@ -238,7 +238,7 @@
 
         <!-- 4. CRC Login -->
         <div id="crcLogin" class="section login-box">
-            <h3>🛡️ प्रशासन (Admin) लॉगिन</h3>
+            <h3>🛡️ केंद्र समन्वयक  (Admin) लॉगिन</h3>
             <div class="form-card" style="border-left-color: #2d3436;">
                 <label>Admin ID 👤</label>
                 <input type="text" id="loginCrcId">
@@ -675,7 +675,7 @@
         function loginCrc() {
             let id = document.getElementById('loginCrcId').value;
             let pass = document.getElementById('loginCrcPass').value;
-            if(id === 'admin' && pass === '1234') {
+            if(id === 'admin' && pass === '9999') {
                 document.getElementById('crcLoginError').style.display = 'none';
                 showSection('crcDashboard');
                 fetchDataFromAPI(() => {
