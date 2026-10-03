@@ -134,7 +134,7 @@
 
         /* Update header colors for Status and Action */
         th.th-status, th.th-action {
-            color: #4facfe; /* Beautiful Sky Blue Color */
+            color: #4facfe; 
             text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
         }
         
@@ -143,7 +143,7 @@
         .th-school { min-width: 150px; }
         .th-type { min-width: 60px; }
         .th-month { min-width: 70px; }
-        .th-pending { min-width: 90px; }
+        .th-pending { min-width: 90px; } 
         .th-status { min-width: 80px; } 
         .th-action { min-width: 70px; } 
         
@@ -152,6 +152,15 @@
         tr:nth-child(odd) td { background-color: #ffffff; }  
         tr:hover td { background-color: #e2e8f0 !important; } 
         
+        /* Total Row Styling */
+        tr.total-row td {
+            background-color: #e2e8f0;
+            font-weight: bold;
+            font-size: 14px;
+            color: #1e293b;
+            border-top: 2px solid #94a3b8;
+        }
+
         /* Colorful Table Columns & Increased Font Sizes */
         .udise-col { font-size: 14px !important; font-weight: bold; color: #334155; }
         .school-name-col { font-size: 15px !important; font-weight: bold; color: #1e3c72; text-align: left; }
@@ -397,6 +406,22 @@
                         <button class="btn-action" onclick="shareReport()" style="background: #f3e8ff; color: #6b21a8; border-color: #e9d5ff;">📤 Share</button>
                     </div>
                 </div>
+                
+                <hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 20px 0;">
+                
+                <!-- Admin Controls -->
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: space-between; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    <div>
+                        <span style="font-size: 13px; color: #475569; font-weight: 600; display: block; margin-bottom: 8px;">⚙️ शाळांसाठी चालू महिना सेट करा:</span>
+                        <div style="display: flex; gap: 10px;">
+                            <select id="activeMonthSelect" style="padding:6px 10px; border-radius:4px; border:1px solid #cbd5e1; background: white; outline: none;"></select>
+                            <button onclick="setActiveMonth()" style="background: #3b82f6; color: white; border: none; padding: 6px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);">सेट करा</button>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span id="currentActiveMonthDisplay" style="font-size: 13px; font-weight: bold; color: #059669; display: block; margin-bottom: 8px; background: #d1fae5; padding: 4px 10px; border-radius: 20px; display: inline-block;"></span>
+                    </div>
+                </div>
             </div>
 
             <!-- Colorful Data Table -->
@@ -454,18 +479,22 @@
         function initDropdowns() {
             let filterSelect = document.getElementById("filterMonth");
             let formSelect = document.getElementById("formMonth");
+            let activeSelect = document.getElementById("activeMonthSelect");
             
             filterSelect.innerHTML = '<option value="सर्व">-- सर्व महिने --</option>';
             formSelect.innerHTML = '';
+            activeSelect.innerHTML = '';
 
             marathiMonths.forEach(m => {
                 filterSelect.innerHTML += `<option value="${m}">${m}</option>`;
                 formSelect.innerHTML += `<option value="${m}">${m}</option>`;
+                activeSelect.innerHTML += `<option value="${m}">${m}</option>`;
             });
             
             let currentSystemMonth = marathiMonths[new Date().getMonth()];
             document.getElementById('formMonth').value = currentSystemMonth;
             document.getElementById('filterMonth').value = currentSystemMonth;
+            document.getElementById('activeMonthSelect').value = currentSystemMonth;
         }
 
         window.onload = function() {
@@ -517,6 +546,9 @@
                 let response = await fetch(scriptURL);
                 let result = await response.json();
                 dbData = result.data || [];
+                globalActiveMonth = result.activeMonth || marathiMonths[new Date().getMonth()];
+                
+                updateCrcDashboardUI();
                 
                 if(currentSchool && document.getElementById('schoolForm').classList.contains('active')) {
                     checkDuplicateEntry();
@@ -574,10 +606,10 @@
         }
 
         async function rejectEntry(entryId) {
-            if(!confirm("तुम्हाला खात्री आहे का की ही माहिती डिलीट (Reject) करायची आहे? ⚠️️")) return;
+            if(!confirm("तुम्हाला खात्री आहे का की ही माहिती डिलीट (Reject) करायची आहे? ⚠️")) return;
             
             let payload = { action: "reject", rowId: String(entryId) };
-            showLoading(true, "माहिती डिलीट करत आहे...🗑️");
+            showLoading(true, "माहिती डिलीट करत आहे...🗑️️");
             try {
                 let response = await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
                 let result = await response.json();
@@ -589,6 +621,20 @@
                 }
             } catch (e) {
                 alert("सर्व्हरशी संपर्क होऊ शकला नाही. 🌐❌");
+            }
+            showLoading(false);
+        }
+
+        async function updateSettingsInAPI(settingsType) {
+            let payload = { action: "updateSettings" };
+            if (settingsType === 'activeMonth') payload.activeMonth = globalActiveMonth;
+
+            // Subtle loader for settings update
+            showLoading(true);
+            try {
+                await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
+            } catch (e) {
+                alert("सेटिंग्ज जतन करताना त्रुटी आली. ❌");
             }
             showLoading(false);
         }
@@ -616,6 +662,7 @@
                 document.getElementById('schoolLoginError').style.display = 'none';
                 
                 fetchDataFromAPI(() => { 
+                    if(globalActiveMonth) document.getElementById('formMonth').value = globalActiveMonth;
                     showSection('schoolForm'); 
                     checkDuplicateEntry();
                 }, true); 
@@ -726,6 +773,21 @@
             }
         }
 
+        function setActiveMonth() {
+            let selectedMonth = document.getElementById('activeMonthSelect').value;
+            globalActiveMonth = selectedMonth;
+            updateSettingsInAPI('activeMonth');
+            updateCrcDashboardUI();
+        }
+
+        function updateCrcDashboardUI() {
+            if(globalActiveMonth) {
+                document.getElementById('currentActiveMonthDisplay').innerText = `सध्याचा महिना: ${globalActiveMonth} 📌`;
+                document.getElementById('activeMonthSelect').value = globalActiveMonth;
+            }
+            renderCrcTable();
+        }
+
         function getSchoolTypeBadge(type) {
             let color = "#6c757d";
             if(type === 'ZP') color = "#6c5ce7";
@@ -745,6 +807,13 @@
             let sortedUdise = Object.keys(schoolsDB).sort();
 
             let tableRows = [];
+            
+            // Variables to calculate total sum
+            let totalPendingPrev = 0;
+            let totalBonafide = 0;
+            let totalMarklist = 0;
+            let totalTc = 0;
+            let totalPendingEnd = 0;
 
             sortedUdise.forEach(udise => {
                 let schoolInfo = schoolsDB[udise];
@@ -752,13 +821,30 @@
                 let schoolType = schoolInfo.type; 
                 let typeBadge = getSchoolTypeBadge(schoolType);
                 
+                // Show ONLY records for the selected month OR if "सर्व" (All) is selected
                 let submissionsForSchool = dbData.filter(d => d.udise === String(udise) && String(d.year) === String(fYear) && (fMonth === 'सर्व' || d.month === fMonth));
 
                 if(submissionsForSchool.length > 0) {
                     submissionsForSchool.forEach(d => {
+                        // Ensure we don't show other months data if a specific month is selected
+                        if (fMonth !== 'सर्व' && d.month !== fMonth) return;
+                        
                         submittedCount++;
                         let statusHtml = `<span class="status-badge status-submitted">✅ Done</span>`;
                         let actionHtml = `<button class="btn-danger" style="padding: 4px 8px; font-size: 11px; width:auto; border-radius:4px; box-shadow:0 1px 2px rgba(0,0,0,0.1);" onclick="rejectEntry('${d.id}')" title="माहिती डिलीट करा">✖ Reject</button>`;
+                        
+                        let pendingPrevVal = Number(d.pendingPrev) || 0;
+                        let bonafideVal = Number(d.bonafide) || 0;
+                        let marklistVal = Number(d.marklist) || 0;
+                        let tcVal = Number(d.tc) || 0;
+                        let pendingEndVal = Number(d.pendingEnd) || 0;
+
+                        // Add to total sums
+                        totalPendingPrev += pendingPrevVal;
+                        totalBonafide += bonafideVal;
+                        totalMarklist += marklistVal;
+                        totalTc += tcVal;
+                        totalPendingEnd += pendingEndVal;
                         
                         tableRows.push(`<tr>
                             <td class="col-info udise-col">${d.udise}</td>
@@ -766,17 +852,18 @@
                             <td class="col-info school-type-col">${typeBadge}</td>
                             <td class="col-info" style="font-size:12px;">${d.month}</td>
                             
-                            <td class="col-danger-light">${d.pendingPrev || 0}</td>
-                            <td class="col-success-light">${d.bonafide || 0}</td>
-                            <td class="col-success-light">${d.marklist || 0}</td>
-                            <td class="col-success-light">${d.tc || 0}</td>
-                            <td class="col-danger-light" style="font-size:14px;">${d.pendingEnd || 0}</td>
+                            <td class="col-danger-light">${pendingPrevVal}</td>
+                            <td class="col-success-light">${bonafideVal}</td>
+                            <td class="col-success-light">${marklistVal}</td>
+                            <td class="col-success-light">${tcVal}</td>
+                            <td class="col-danger-light" style="font-size:14px;">${pendingEndVal}</td>
                             
                             <td>${statusHtml}</td>
                             <td class="action-column">${actionHtml}</td>
                         </tr>`);
                     });
                 } else if (fMonth !== 'सर्व') {
+                    // Only show pending rows if a specific month is selected
                     tableRows.push(`<tr>
                         <td class="col-info udise-col">${udise}</td>
                         <td class="col-info school-name-col">${schoolName}</td>
@@ -795,22 +882,38 @@
                 }
             });
 
+            // Set the inner HTML
             if(tableRows.length > 0) {
+                // Add the Total Row at the end
+                if (fMonth !== 'सर्व') {
+                     tableRows.push(`<tr class="total-row">
+                        <td colspan="4" style="text-align: right; padding-right: 20px;"><b>एकूण (Total):</b></td>
+                        <td style="color: #991b1b;">${totalPendingPrev}</td>
+                        <td style="color: #065f46;">${totalBonafide}</td>
+                        <td style="color: #065f46;">${totalMarklist}</td>
+                        <td style="color: #065f46;">${totalTc}</td>
+                        <td style="color: #991b1b; font-size: 15px;">${totalPendingEnd}</td>
+                        <td colspan="2"></td>
+                    </tr>`);
+                }
+                
                 tbody.innerHTML = tableRows.join('');
             } else if(fMonth === 'सर्व') {
                  tbody.innerHTML = `<tr><td colspan="11" style="padding: 40px; color: #94a3b8; font-size: 15px;">कोणतीही माहिती उपलब्ध नाही. 🚫</td></tr>`;
             }
 
+            // Update Progress boxes
             if(fMonth !== 'सर्व') {
                 document.getElementById('totalSchoolsProgress').innerText = totalSchoolsCount;
                 document.getElementById('submittedSchoolsProgress').innerText = submittedCount;
                 document.getElementById('pendingSchoolsProgress').innerText = totalSchoolsCount - submittedCount;
                 
+                // Color updates based on pending count
                 let pendingElem = document.getElementById('pendingSchoolsProgress');
                 if(totalSchoolsCount - submittedCount === 0) {
-                    pendingElem.style.color = '#10b981'; 
+                    pendingElem.style.color = '#10b981'; // Green if all done
                 } else {
-                    pendingElem.style.color = '#ef4444'; 
+                    pendingElem.style.color = '#ef4444'; // Red if pending
                 }
             } else {
                 document.getElementById('totalSchoolsProgress').innerText = "-";
@@ -821,12 +924,66 @@
 
         // --- Export & Share Functions ---
         function exportExcel() {
-            let table = document.getElementById("crcDataTable").cloneNode(true);
+            // Get selected month/year
             let fMonth = document.getElementById('filterMonth').value;
             let fYear = document.getElementById('filterYear').value;
 
-            for (let i = 0; i < table.rows.length; i++) {
-                table.rows[i].deleteCell(-1); // Remove Action column
+            // Optional: check if data exists
+            let table = document.getElementById("crcDataTable");
+            let tbody = document.getElementById('crcTableBody');
+            
+            if(tbody.innerHTML.includes("कोणतीही माहिती उपलब्ध नाही") || tbody.rows.length === 0) {
+                alert("डाउनलोड करण्यासाठी कोणतीही माहिती उपलब्ध नाही.");
+                return;
+            }
+
+            // Create a clone to manipulate
+            let tableClone = table.cloneNode(true);
+            
+            // Extract rows and ONLY keep rows that match the selected month OR keep all if "सर्व" is selected
+            let rows = Array.from(tableClone.querySelectorAll('tbody tr'));
+            
+            // Remove the 'Action' column (last column)
+            let headerCells = tableClone.querySelectorAll('thead th');
+            if(headerCells.length > 0) {
+                headerCells[headerCells.length - 1].remove(); // Remove last header
+            }
+
+            let filteredRowsData = [];
+            rows.forEach(row => {
+                // Keep the total row or match month
+                if(row.classList.contains('total-row')) {
+                     row.deleteCell(-1); // Remove empty action cell in total row
+                     let rowData = [];
+                     let cols = row.querySelectorAll('td');
+                     cols.forEach(col => {
+                         rowData.push(col.innerText.replace(/[^\x00-\x7F\u0900-\u097F]/g, "").trim());
+                     });
+                     
+                     // Since colspan=4 is used, Excel needs empty strings for spanned columns
+                     filteredRowsData.push(["", "", "", rowData[0], rowData[1], rowData[2], rowData[3], rowData[4], rowData[5], ""]);
+                } else {
+                    let monthCell = row.cells[3]; // Month is 4th column (index 3)
+                    if(monthCell) {
+                        let rowMonth = monthCell.innerText.trim();
+                        // If filter is "सर्व" OR row month matches filter, keep it
+                        if(fMonth === 'सर्व' || rowMonth === fMonth) {
+                            row.deleteCell(-1); // Remove Action cell
+                            
+                            let rowData = [];
+                            let cols = row.querySelectorAll('td');
+                            cols.forEach(col => {
+                                rowData.push(col.innerText.replace(/[^\x00-\x7F\u0900-\u097F]/g, "").trim());
+                            });
+                            filteredRowsData.push(rowData);
+                        }
+                    }
+                }
+            });
+
+            if(filteredRowsData.length === 0) {
+                alert("या महिन्यासाठी कोणताही डेटा उपलब्ध नाही.");
+                return;
             }
 
             let wb = XLSX.utils.book_new();
@@ -834,16 +991,15 @@
                 [`लोकसेवा हक्क माहिती अहवाल - केंद्र: पिंपळगाव (${fMonth} ${fYear})`]
             ];
             
-            let rows = table.querySelectorAll('tr');
-            rows.forEach((row, rowIndex) => {
-                let rowData = [];
-                let cols = row.querySelectorAll('th, td');
-                cols.forEach(col => {
-                    // Extract text properly, ignoring emojis
-                    rowData.push(col.innerText.replace(/[^\x00-\x7F\u0900-\u097F]/g, "").trim()); 
-                });
-                ws_data.push(rowData);
+            // Add Header Row Data
+            let headersData = [];
+            tableClone.querySelectorAll('thead th').forEach(th => {
+               headersData.push(th.innerText.replace(/[^\x00-\x7F\u0900-\u097F]/g, "").trim()); 
             });
+            ws_data.push(headersData);
+            
+            // Add Filtered Data
+            ws_data = ws_data.concat(filteredRowsData);
 
             let ws = XLSX.utils.aoa_to_sheet(ws_data);
             ws['!merges'] = [ { s: { r: 0, c: 0 }, e: { r: 0, c: 9 } } ];
@@ -853,6 +1009,13 @@
         }
 
         function exportPDF() {
+            // Optional: check if data exists
+            let tbody = document.getElementById('crcTableBody');
+            if(tbody.innerHTML.includes("कोणतीही माहिती उपलब्ध नाही") || tbody.rows.length === 0) {
+                alert("डाउनलोड करण्यासाठी कोणतीही माहिती उपलब्ध नाही.");
+                return;
+            }
+
             showLoading(true, "PDF तयार होत आहे... कृपया थांबा 📄");
             
             const { jsPDF } = window.jspdf;
@@ -860,14 +1023,6 @@
             
             let fMonth = document.getElementById('filterMonth').value;
             let fYear = document.getElementById('filterYear').value;
-            
-            // Due to jsPDF limits with Unicode/Marathi fonts, we use a basic fallback 
-            // but generate the table structure correctly.
-            
-            // Add custom Marathi font if you have it as Base64, otherwise it will fallback
-            // Adding a simple title (Note: jsPDF natively struggles with complex Devnagari without custom VFS fonts)
-            // As a workaround, we use English/Numbers for the core data if Marathi fails, 
-            // but autoTable helps structure it.
             
             doc.setFontSize(16);
             doc.text("Lokseva Hakka Mahiti - Report", 14, 15);
@@ -881,17 +1036,50 @@
             let dataForPdf = [];
             
             rows.forEach(row => {
-                let rowData = [];
-                let cols = row.querySelectorAll('td');
-                if(cols.length > 0) {
-                    for(let i=0; i<10; i++) { // First 10 columns
-                        // Clean text (remove emojis)
-                        let text = cols[i].innerText.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '').trim();
-                        rowData.push(text);
+                if(row.classList.contains('total-row')) {
+                     let rowData = [];
+                     let cols = row.querySelectorAll('td');
+                     if(cols.length > 0) {
+                         // Empty strings for the colspan to align correctly in autotable
+                         rowData.push(""); 
+                         rowData.push(""); 
+                         rowData.push(""); 
+                         
+                         let text0 = cols[0].innerText.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '').trim();
+                         rowData.push(text0); // "Total:"
+                         
+                         for(let i=1; i<6; i++) { // The 5 sum columns
+                             let text = cols[i].innerText.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '').trim();
+                             rowData.push(text);
+                         }
+                         rowData.push(""); // Empty status
+                         dataForPdf.push(rowData);
+                     }
+                } else {
+                    let monthCell = row.cells[3];
+                    if(monthCell) {
+                        let rowMonth = monthCell.innerText.trim();
+                        // FILTER: Only add row if it matches selected month OR if "सर्व" is selected
+                        if(fMonth === 'सर्व' || rowMonth === fMonth) {
+                            let rowData = [];
+                            let cols = row.querySelectorAll('td');
+                            if(cols.length > 0) {
+                                for(let i=0; i<10; i++) { // First 10 columns (skip action)
+                                    let text = cols[i].innerText.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '').trim();
+                                    rowData.push(text);
+                                }
+                                dataForPdf.push(rowData);
+                            }
+                        }
                     }
-                    dataForPdf.push(rowData);
                 }
             });
+
+            if(dataForPdf.length === 0) {
+                 showLoading(false);
+                 alert("या महिन्यासाठी कोणताही डेटा उपलब्ध नाही.");
+                 return;
+            }
 
             doc.autoTable({ 
                 head: [['UDISE', 'School Name', 'Type', 'Month', 'Prev Pending', 'Bonafide', 'Marklist', 'TC', 'End Pending', 'Status']],
@@ -911,6 +1099,13 @@
                     7: { cellWidth: 20, halign: 'center' },
                     8: { cellWidth: 20, halign: 'center' },
                     9: { cellWidth: 20 }
+                },
+                didParseCell: function(data) {
+                    // Make the total row bold and gray background
+                    if (data.row.index === dataForPdf.length - 1 && document.getElementById('filterMonth').value !== 'सर्व') {
+                        data.cell.styles.fontStyle = 'bold';
+                        data.cell.styles.fillColor = [226, 232, 240];
+                    }
                 }
             });
             
