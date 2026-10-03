@@ -7,8 +7,8 @@
     
     <!-- External Libraries for Exporting -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <!-- html2pdf for perfect Marathi text rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <style>
         /* Base Styles */
@@ -69,6 +69,9 @@
         .btn-primary:hover { background-color: #2a5298; transform: translateY(-1px); }
         .btn-danger { background-color: #dc3545; color: white; border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer; font-size: 14px; transition: 0.2s; }
         .btn-danger:hover { background-color: #c82333; }
+        .btn-info { background-color: #17a2b8; box-shadow: 0 4px 10px rgba(23, 162, 184, 0.3); }
+        .btn-info:hover { background-color: #138496; transform: translateY(-1px); }
+        
         .btn-action { width: auto; display: inline-flex; align-items: center; gap: 5px; margin: 5px; padding: 10px 20px; font-size: 15px; border-radius: 8px; background-color: #f8f9fa; color: #333; border: 1px solid #ced4da; font-weight: bold; cursor: pointer; transition: 0.3s;}
         .btn-action:hover { background-color: #e2e6ea; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1);}
 
@@ -118,7 +121,6 @@
         table { width: 100%; border-collapse: collapse; font-size: 13px; background: white; border: 1px solid #cbd5e1; }
         th, td { border: 1px solid #cbd5e1; padding: 10px 8px; text-align: center; vertical-align: middle; }
         
-        /* Table Headers Adjusted */
         th { 
             background-color: #1e3c72; 
             color: #ffffff; 
@@ -133,13 +135,11 @@
             z-index: 10;
         }
 
-        /* Update header colors for Status and Action */
         th.th-status, th.th-action {
             color: #4facfe; 
             text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
         }
         
-        /* Specific header widths to avoid crowding */
         .th-udise { min-width: 90px; }
         .th-school { min-width: 150px; }
         .th-type { min-width: 60px; }
@@ -148,12 +148,10 @@
         .th-status { min-width: 80px; } 
         .th-action { min-width: 70px; } 
         
-        /* Table Row Hover & Zebra Striping */
         tr:nth-child(even) td { background-color: #f8fafc; } 
         tr:nth-child(odd) td { background-color: #ffffff; }  
         tr:hover td { background-color: #e2e8f0 !important; } 
         
-        /* Total Row Styling */
         tr.total-row td {
             background-color: #e2e8f0;
             font-weight: bold;
@@ -165,7 +163,6 @@
             z-index: 10;
         }
 
-        /* Colorful Table Columns & Increased Font Sizes */
         .udise-col { font-size: 14px !important; font-weight: bold; color: #334155; }
         .school-name-col { font-size: 15px !important; font-weight: bold; color: #1e3c72; text-align: left; }
         .school-type-col { font-size: 13px !important; }
@@ -357,8 +354,20 @@
 
             <div id="previewArea">
                 <h4 style="color:#1e3c72; margin-top:0; border-bottom: 2px solid #b8daff; padding-bottom: 10px;">🔎 माहितीची पडताळणी करा</h4>
-                <div id="previewText" style="line-height:1.8; font-size: 15px; color: #333; background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);"></div>
-                <button class="btn btn-success" onclick="submitDataToAPI()" style="padding: 15px; font-size: 18px; margin-top: 20px;">💾 Final Submit (माहिती जतन करा)</button>
+                
+                <!-- School Level PDF Container -->
+                <div id="schoolPdfContent">
+                    <div style="text-align:center; display:none;" id="schoolPdfHeader">
+                        <h2 style="color: #1e3c72; margin-bottom: 5px;">महाराष्ट्र लोकसेवा हक्क माहिती प्रणाली अहवाल</h2>
+                        <h3 style="color: #555; margin-top: 0; margin-bottom: 20px;">केंद्र: पिंपळगाव</h3>
+                    </div>
+                    <div id="previewText" style="line-height:1.8; font-size: 15px; color: #333; background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);"></div>
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-top: 20px;">
+                    <button class="btn btn-info" onclick="downloadSchoolPDF()" style="flex: 1; padding: 15px; font-size: 18px; margin-top: 0;">📄 PDF डाउनलोड करा</button>
+                    <button class="btn btn-success" onclick="submitDataToAPI()" style="flex: 2; padding: 15px; font-size: 18px; margin-top: 0;">💾 Final Submit (जतन करा)</button>
+                </div>
             </div>
         </div>
 
@@ -423,25 +432,12 @@
                 
                 <div style="display: flex; gap: 15px; justify-content: center;">
                     <button class="btn-action" onclick="exportExcel()" style="background: #dcfce7; color: #166534; border-color: #bbf7d0; font-size: 16px; padding: 12px 25px;">📊 Excel डाउनलोड</button>
-                    <button class="btn-action" onclick="exportPDF()" style="background: #fee2e2; color: #991b1b; border-color: #fecaca; font-size: 16px; padding: 12px 25px;">📄 PDF डाउनलोड</button>
+                    <button class="btn-action" onclick="exportPDFHtml2Pdf()" style="background: #fee2e2; color: #991b1b; border-color: #fecaca; font-size: 16px; padding: 12px 25px;">📄 PDF डाउनलोड</button>
                 </div>
             </div>
             
             <!-- Hidden Table strictly used for exporting data properly -->
             <table id="hiddenExportTable" style="display: none;">
-                <thead>
-                    <tr>
-                        <th>UDISE</th>
-                        <th>School Name</th>
-                        <th>Type</th>
-                        <th>Month</th>
-                        <th>Prev Pending</th>
-                        <th>Bonafide</th>
-                        <th>Marklist</th>
-                        <th>TC</th>
-                        <th>End Pending</th>
-                    </tr>
-                </thead>
                 <tbody id="hiddenExportBody"></tbody>
             </table>
         </div>
@@ -543,7 +539,7 @@
             let formSelect = document.getElementById("formMonth");
             
             filterSelect.innerHTML = '<option value="सर्व">-- सर्व महिने --</option>';
-            exportMonthSelect.innerHTML = '';
+            exportMonthSelect.innerHTML = '<option value="सर्व">-- संपूर्ण वर्ष (सर्व महिने) --</option>';
             formSelect.innerHTML = '';
 
             marathiMonths.forEach(m => {
@@ -597,7 +593,7 @@
         function openExportSection() {
             showSection('exportSection');
             // Sync filter values just in case
-            document.getElementById('exportFilterMonth').value = document.getElementById('filterMonth').value !== 'सर्व' ? document.getElementById('filterMonth').value : marathiMonths[new Date().getMonth()];
+            document.getElementById('exportFilterMonth').value = document.getElementById('filterMonth').value;
             document.getElementById('exportFilterYear').value = document.getElementById('filterYear').value;
         }
 
@@ -808,6 +804,23 @@
             document.getElementById('previewArea').style.display = 'block';
         }
 
+        // Feature: School can download their own preview as PDF
+        function downloadSchoolPDF() {
+            document.getElementById('schoolPdfHeader').style.display = 'block';
+            var element = document.getElementById('schoolPdfContent');
+            var opt = {
+              margin:       15,
+              filename:     `Lokseva_Report_${currentSchool.udise}_${document.getElementById('formMonth').value}.pdf`,
+              image:        { type: 'jpeg', quality: 0.98 },
+              html2canvas:  { scale: 2, useCORS: true },
+              jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                document.getElementById('schoolPdfHeader').style.display = 'none';
+            });
+        }
+
         // --- CRC Functions ---
         function loginCrc() {
             let id = document.getElementById('loginCrcId').value;
@@ -928,6 +941,7 @@
                 }
                 tbody.innerHTML = tableRows.join('');
             } else if(fMonth === 'सर्व') {
+                 // Even if no data, we show blank state
                  tbody.innerHTML = `<tr><td colspan="11" style="padding: 40px; color: #94a3b8; font-size: 15px;">कोणतीही माहिती उपलब्ध नाही. 🚫</td></tr>`;
             }
 
@@ -949,8 +963,7 @@
             }
         }
 
-        // --- EXPORT FUNCTIONS (Hidden Data Method) ---
-        // To accurately export without HTML interference, we build a clean data array first
+        // --- EXPORT FUNCTIONS FOR CRC ---
         function prepareExportData() {
             let fMonth = document.getElementById('exportFilterMonth').value;
             let fYear = document.getElementById('exportFilterYear').value;
@@ -962,15 +975,16 @@
             let totalMarklist = 0;
             let totalTc = 0;
             let totalPendingEnd = 0;
-            let recordsFound = false;
 
+            // Generate Export data exactly as it looks in the table, even if it's all zeros
             sortedUdise.forEach(udise => {
                 let schoolInfo = schoolsDB[udise];
-                let submissions = dbData.filter(d => d.udise === String(udise) && String(d.year) === String(fYear) && d.month === fMonth);
+                let submissions = dbData.filter(d => d.udise === String(udise) && String(d.year) === String(fYear) && (fMonth === 'सर्व' || d.month === fMonth));
 
                 if(submissions.length > 0) {
-                    recordsFound = true;
                     submissions.forEach(d => {
+                        if (fMonth !== 'सर्व' && d.month !== fMonth) return;
+                        
                         let pp = Number(d.pendingPrev) || 0;
                         let b = Number(d.bonafide) || 0;
                         let m = Number(d.marklist) || 0;
@@ -979,55 +993,51 @@
                         
                         totalPendingPrev += pp; totalBonafide += b; totalMarklist += m; totalTc += t; totalPendingEnd += pe;
 
-                        exportRows.push([d.udise, d.schoolName, schoolInfo.type, d.month, pp, b, m, t, pe]);
+                        exportRows.push([d.udise, d.schoolName, schoolInfo.type, d.month, pp, b, m, t, pe, "Done"]);
                     });
-                } else {
-                    exportRows.push([udise, schoolInfo.name, schoolInfo.type, fMonth, 0, 0, 0, 0, 0]);
+                } else if (fMonth !== 'सर्व') {
+                    // Include pending schools with zeros in export
+                    exportRows.push([udise, schoolInfo.name, schoolInfo.type, fMonth, 0, 0, 0, 0, 0, "Pending"]);
                 }
             });
 
-            if(!recordsFound) return null; // No submissions found
-
-            // Add Total Row
-            exportRows.push(["", "एकूण (Total)", "", "", totalPendingPrev, totalBonafide, totalMarklist, totalTc, totalPendingEnd]);
+            if (fMonth !== 'सर्व' && exportRows.length > 0) {
+                exportRows.push(["", "एकूण (Total)", "", "", totalPendingPrev, totalBonafide, totalMarklist, totalTc, totalPendingEnd, ""]);
+            }
             
             return { data: exportRows, month: fMonth, year: fYear };
         }
 
         function exportExcel() {
             let exportData = prepareExportData();
-            if(!exportData) {
-                alert("या महिन्यासाठी कोणतीही भरलेली माहिती उपलब्ध नाही.");
+            if(exportData.data.length === 0) {
+                alert("डाउनलोड करण्यासाठी कोणतीही माहिती उपलब्ध नाही.");
                 return;
             }
 
             let wb = XLSX.utils.book_new();
             let ws_data = [
                 [`लोकसेवा हक्क माहिती अहवाल - केंद्र: पिंपळगाव (${exportData.month} ${exportData.year})`],
-                ['UDISE', 'शाळेचे नाव', 'प्रकार', 'महिना', 'मागील प्रलंबित', 'Bonafide', 'Marklist', 'TC', 'शेवटी प्रलंबित']
+                ['UDISE', 'शाळेचे नाव', 'प्रकार', 'महिना', 'मागील प्रलंबित', 'Bonafide', 'Marklist', 'TC', 'शेवटी प्रलंबित', 'स्थिती']
             ];
             
             ws_data = ws_data.concat(exportData.data);
 
             let ws = XLSX.utils.aoa_to_sheet(ws_data);
-            ws['!merges'] = [ { s: { r: 0, c: 0 }, e: { r: 0, c: 8 } } ];
+            ws['!merges'] = [ { s: { r: 0, c: 0 }, e: { r: 0, c: 9 } } ];
 
             XLSX.utils.book_append_sheet(wb, ws, "Report");
             XLSX.writeFile(wb, `Lokseva_Report_Pimpalgaon_${exportData.month}_${exportData.year}.xlsx`);
         }
 
-        // USING Unicode Font encoding technique for jsPDF to support Marathi
-        function exportPDF() {
+        function exportPDFHtml2Pdf() {
             let exportData = prepareExportData();
-            if(!exportData) {
-                alert("या महिन्यासाठी कोणतीही भरलेली माहिती उपलब्ध नाही.");
+            if(exportData.data.length === 0) {
+                alert("डाउनलोड करण्यासाठी कोणतीही माहिती उपलब्ध नाही.");
                 return;
             }
 
             showLoading(true, "PDF तयार होत आहे... 📄");
-            
-            // To make Marathi work in PDF, we inject the data into a hidden HTML table and use html2pdf
-            // Because standard jsPDF autoTable fails badly on complex Devnagari conjuncts
             
             let hiddenTbody = document.getElementById('hiddenExportBody');
             hiddenTbody.innerHTML = '';
@@ -1037,9 +1047,10 @@
                 row.forEach((cellData, index) => {
                     let td = document.createElement('td');
                     td.innerText = cellData;
-                    td.style.border = "1px solid #000";
-                    td.style.padding = "5px";
+                    td.style.border = "1px solid #cbd5e1";
+                    td.style.padding = "8px 5px";
                     td.style.fontSize = "12px";
+                    td.style.textAlign = index > 3 && index < 9 ? "center" : "left";
                     
                     if(row[1] === "एकूण (Total)") {
                         td.style.fontWeight = "bold";
@@ -1050,30 +1061,30 @@
                 hiddenTbody.appendChild(tr);
             });
 
-            // Create a temporary container for PDF generation to ensure perfect styling
             let tempContainer = document.createElement('div');
             tempContainer.style.padding = "20px";
             tempContainer.style.backgroundColor = "white";
-            tempContainer.style.width = "1000px";
+            tempContainer.style.width = "1050px"; // Wide enough for table
             
             let headerHtml = `
                 <h2 style="text-align:center; color:#1e3c72; margin-bottom:5px; font-family: sans-serif;">महाराष्ट्र लोकसेवा हक्क माहिती प्रणाली अहवाल</h2>
-                <h4 style="text-align:center; color:#555; margin-top:0; margin-bottom:20px; font-family: sans-serif;">केंद्र: पिंपळगाव | महिना: ${exportData.month} ${exportData.year}</h4>
+                <h4 style="text-align:center; color:#555; margin-top:0; margin-bottom:20px; font-family: sans-serif;">केंद्र: पिंपळगाव | कालावधी: ${exportData.month} ${exportData.year}</h4>
             `;
             
             let tableHtml = `
-                <table style="width:100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px;">
+                <table style="width:100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px; border: 1px solid #cbd5e1;">
                     <thead>
                         <tr style="background-color: #1e3c72; color: white;">
-                            <th style="border: 1px solid #000; padding: 8px;">UDISE</th>
-                            <th style="border: 1px solid #000; padding: 8px; text-align: left;">शाळेचे नाव</th>
-                            <th style="border: 1px solid #000; padding: 8px;">प्रकार</th>
-                            <th style="border: 1px solid #000; padding: 8px;">महिना</th>
-                            <th style="border: 1px solid #000; padding: 8px;">मागील प्रलंबित</th>
-                            <th style="border: 1px solid #000; padding: 8px;">Bonafide</th>
-                            <th style="border: 1px solid #000; padding: 8px;">Marklist</th>
-                            <th style="border: 1px solid #000; padding: 8px;">TC</th>
-                            <th style="border: 1px solid #000; padding: 8px;">शेवटी प्रलंबित</th>
+                            <th style="border: 1px solid #0f203c; padding: 10px 5px; text-align: left;">UDISE</th>
+                            <th style="border: 1px solid #0f203c; padding: 10px 5px; text-align: left;">शाळेचे नाव</th>
+                            <th style="border: 1px solid #0f203c; padding: 10px 5px;">प्रकार</th>
+                            <th style="border: 1px solid #0f203c; padding: 10px 5px;">महिना</th>
+                            <th style="border: 1px solid #0f203c; padding: 10px 5px;">मागील प्रलंबित</th>
+                            <th style="border: 1px solid #0f203c; padding: 10px 5px;">Bonafide</th>
+                            <th style="border: 1px solid #0f203c; padding: 10px 5px;">Marklist</th>
+                            <th style="border: 1px solid #0f203c; padding: 10px 5px;">TC</th>
+                            <th style="border: 1px solid #0f203c; padding: 10px 5px;">शेवटी प्रलंबित</th>
+                            <th style="border: 1px solid #0f203c; padding: 10px 5px;">स्थिती</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1095,6 +1106,25 @@
             html2pdf().set(opt).from(tempContainer).save().then(() => {
                 showLoading(false);
             });
+        }
+
+        async function shareReport() {
+            let fMonth = document.getElementById('exportFilterMonth').value;
+            let fYear = document.getElementById('exportFilterYear').value;
+            
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'लोकसेवा हक्क माहिती अहवाल 📊',
+                        text: `केंद्र पिंपळगाव: ${fMonth} ${fYear} चा लोकसेवा हक्क माहिती अहवाल पोर्टलवर उपलब्ध आहे. कृपया तपासा.`,
+                        url: window.location.href
+                    });
+                } catch (err) {
+                    console.log('Share canceled or failed.', err);
+                }
+            } else {
+                alert("तुमच्या ब्राउझरमध्ये शेअर सुविधा उपलब्ध नाही. कृपया PDF किंवा Excel डाउनलोड करून शेअर करा. 📤");
+            }
         }
     </script>
 </body>
