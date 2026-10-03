@@ -74,11 +74,36 @@
         .status-badge { padding: 3px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; }
         .status-submitted { background-color: #d4edda; color: #155724; }
         .status-locked { background-color: #f8d7da; color: #721c24; }
+        .status-pending { background-color: #fff3cd; color: #856404; }
 
         #previewArea { background: #e9ecef; padding: 15px; border-radius: 4px; margin-top: 15px; display: none; border-left: 4px solid #0056b3;}
         
         /* Loading Overlay */
         #loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 9999; text-align: center; padding-top: 20%; font-size: 24px; color: #0056b3; font-weight: bold; }
+        
+        /* Progress Status */
+        .progress-box {
+            display: flex;
+            justify-content: space-around;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6;
+        }
+        .progress-item { text-align: center; }
+        .progress-number { font-size: 24px; font-weight: bold; color: #0056b3; }
+        .progress-label { font-size: 14px; color: #6c757d; }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border: 1px solid #ffeeba;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -120,54 +145,56 @@
         <!-- 3. School Data Entry Form -->
         <div id="schoolForm" class="section">
             <h3 id="schoolFormTitle">माहिती भरा</h3>
+            
+            <div id="duplicateEntryAlert" class="alert-warning">
+                <strong>सूचना:</strong> तुम्ही या महिन्याची माहिती आधीच भरली आहे. तुम्ही फक्त एकदाच माहिती भरू शकता.
+            </div>
+
             <p style="text-align: right; background-color:#f8f9fa; padding:10px; border-radius:4px; border:1px solid #ddd;">
                 <b>UDISE:</b> <span id="currentUdise"></span> | <b>शाळा:</b> <span id="currentSchoolName"></span>
             </p>
             
-            <div class="form-group color-1">
-                <label>वर्ष</label>
-                <select id="formYear">
-                    <option value="2026">2026</option>
-                    <option value="2027">2027</option>
-                </select>
-            </div>
-            <div class="form-group color-2">
-                <label>महिना</label>
-                <select id="formMonth">
-                    <option value="जानेवारी">जानेवारी</option><option value="फेब्रुवारी">फेब्रुवारी</option>
-                    <option value="मार्च">मार्च</option><option value="एप्रिल">एप्रिल</option>
-                    <option value="मे">मे</option><option value="जून">जून</option>
-                    <option value="जुलै">जुलै</option><option value="ऑगस्ट">ऑगस्ट</option>
-                    <option value="सप्टेंबर">सप्टेंबर</option><option value="ऑक्टोबर">ऑक्टोबर</option>
-                    <option value="नोव्हेंबर">नोव्हेंबर</option><option value="डिसेंबर">डिसेंबर</option>
-                </select>
-            </div>
-            <div class="form-group color-3">
-                <label>माहिती भरणाऱ्या व्यक्तीचा मोबाईल नंबर</label>
-                <input type="number" id="formMobile" placeholder="मोबाईल नंबर टाईप करा">
-            </div>
-            <div class="form-group color-4">
-                <label>A) मागील महिन्यातील प्रलंबित अर्जांची संख्या</label>
-                <input type="number" id="formPendingPrev" value="0">
-            </div>
-            <div class="form-group color-5">
-                <label>1) या महिन्यात दिलेले बोनाफाईड (Bonafide)</label>
-                <input type="number" id="formBonafide" value="0">
-            </div>
-            <div class="form-group color-6">
-                <label>2) या महिन्यात दिलेले द्वितीय गुणपत्रक (Second Marklist)</label>
-                <input type="number" id="formMarklist" value="0">
-            </div>
-            <div class="form-group color-7">
-                <label>3) या महिन्यात दिलेला शाळा सोडल्याचा दाखला (TC)</label>
-                <input type="number" id="formTc" value="0">
-            </div>
-            <div class="form-group color-8">
-                <label>B) या महिन्याच्या शेवटी प्रलंबित अर्जांची संख्या</label>
-                <input type="number" id="formPendingEnd" value="0">
-            </div>
+            <div id="dataEntryFields">
+                <div class="form-group color-1">
+                    <label>वर्ष</label>
+                    <select id="formYear" onchange="checkDuplicateEntry()">
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
+                    </select>
+                </div>
+                <div class="form-group color-2">
+                    <label>महिना</label>
+                    <select id="formMonth" onchange="checkDuplicateEntry()">
+                        <!-- Options will be populated by JS -->
+                    </select>
+                </div>
+                <div class="form-group color-3">
+                    <label>माहिती भरणाऱ्या व्यक्तीचा मोबाईल नंबर</label>
+                    <input type="number" id="formMobile" placeholder="मोबाईल नंबर टाईप करा">
+                </div>
+                <div class="form-group color-4">
+                    <label>A) मागील महिन्यातील प्रलंबित अर्जांची संख्या</label>
+                    <input type="number" id="formPendingPrev" value="0">
+                </div>
+                <div class="form-group color-5">
+                    <label>1) या महिन्यात दिलेले बोनाफाईड (Bonafide)</label>
+                    <input type="number" id="formBonafide" value="0">
+                </div>
+                <div class="form-group color-6">
+                    <label>2) या महिन्यात दिलेले द्वितीय गुणपत्रक (Second Marklist)</label>
+                    <input type="number" id="formMarklist" value="0">
+                </div>
+                <div class="form-group color-7">
+                    <label>3) या महिन्यात दिलेला शाळा सोडल्याचा दाखला (TC)</label>
+                    <input type="number" id="formTc" value="0">
+                </div>
+                <div class="form-group color-8">
+                    <label>B) या महिन्याच्या शेवटी प्रलंबित अर्जांची संख्या</label>
+                    <input type="number" id="formPendingEnd" value="0">
+                </div>
 
-            <button class="btn btn-secondary" onclick="previewData()">माहिती तपासा (Preview)</button>
+                <button class="btn btn-secondary" onclick="previewData()">माहिती तपासा (Preview)</button>
+            </div>
 
             <div id="previewArea">
                 <h4 style="color:#0056b3; margin-top:0;">माहितीची पडताळणी करा</h4>
@@ -195,6 +222,21 @@
         <div id="crcDashboard" class="section">
             <h3>CRC डॅशबोर्ड - एकत्रित अहवाल</h3>
             
+            <div class="progress-box">
+                <div class="progress-item">
+                    <div class="progress-number" id="totalSchoolsProgress">10</div>
+                    <div class="progress-label">एकूण शाळा</div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-number" id="submittedSchoolsProgress" style="color: #28a745;">0</div>
+                    <div class="progress-label">माहिती भरलेल्या (चालू महिना)</div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-number" id="pendingSchoolsProgress" style="color: #dc3545;">10</div>
+                    <div class="progress-label">माहिती बाकी</div>
+                </div>
+            </div>
+
             <div style="background: #e9ecef; padding: 15px; border-radius: 4px; margin-bottom: 15px;">
                 <label><b>फिल्टर:</b> </label>
                 <select id="filterYear" onchange="renderCrcTable()" style="padding:5px; border-radius:4px; border:1px solid #ccc;">
@@ -202,18 +244,22 @@
                     <option value="2027">2027</option>
                 </select>
                 <select id="filterMonth" onchange="renderCrcTable()" style="padding:5px; border-radius:4px; border:1px solid #ccc;">
-                    <option value="सर्व">-- सर्व महिने --</option>
-                    <option value="जानेवारी">जानेवारी</option><option value="फेब्रुवारी">फेब्रुवारी</option>
-                    <option value="मार्च">मार्च</option><option value="एप्रिल">एप्रिल</option>
-                    <option value="मे">मे</option><option value="जून">जून</option>
-                    <option value="जुलै">जुलै</option><option value="ऑगस्ट">ऑगस्ट</option>
-                    <option value="सप्टेंबर">सप्टेंबर</option><option value="ऑक्टोबर">ऑक्टोबर</option>
-                    <option value="नोव्हेंबर">नोव्हेंबर</option><option value="डिसेंबर">डिसेंबर</option>
+                    <!-- Options populated by JS -->
                 </select>
                 <button class="btn btn-export" onclick="exportExcel()">Excel डाउनलोड</button>
                 <button class="btn btn-export" onclick="exportPDF()">PDF डाउनलोड</button>
-                <button class="btn btn-secondary" onclick="fetchDataFromAPI()" style="float: right; margin-left: 10px; padding: 6px 12px; margin-top:0;">डेटा रिफ्रेश करा</button>
-                <button class="btn btn-danger" id="btnLockMonth" onclick="lockCurrentMonth()" style="float: right; margin-top:0;">हा महिना Lock करा</button>
+                <button class="btn btn-secondary" onclick="fetchDataFromAPI()" style="float: right; margin-left: 10px; padding: 6px 12px; margin-top:0;">लाईव्ह रिफ्रेश</button>
+                
+                <div style="margin-top: 10px; border-top: 1px solid #ccc; padding-top: 10px;">
+                    <label><b>माहिती भरण्यासाठी महिना सुरू करा (CRC Control):</b></label>
+                    <select id="activeMonthSelect" style="padding:5px; border-radius:4px; border:1px solid #ccc;">
+                         <!-- Options populated by JS -->
+                    </select>
+                    <button class="btn btn-secondary" onclick="setActiveMonth()" style="width: auto; padding: 5px 10px; margin-left: 10px;">हा महिना सेट करा</button>
+                    <span id="currentActiveMonthDisplay" style="margin-left: 15px; font-weight: bold; color: #28a745;"></span>
+                </div>
+                
+                <button class="btn btn-danger" id="btnLockMonth" onclick="lockCurrentMonth()" style="float: right; margin-top: -30px;">हा महिना Lock करा</button>
             </div>
 
             <div style="overflow-x:auto;">
@@ -246,7 +292,6 @@
         const scriptURL = "https://script.google.com/macros/s/AKfycbwJJj0sNV41jBF8tMrT7bf7Sx4G0DZYi6PNQhuGA_yKp_HyqycP4GjEEhKQD569FA61qQ/exec"; 
         // ====================================================
 
-        // === Updated Schools DB with UDISE ===
         const schoolsDB = {
             "27100503201": "जि.प.केंद्रीय प्राथमिक शाळा पिंपळगाव",
             "27100503202": "जि.प. हायस्कूल तथा कनिष्ठ महाविद्यालय पिंपळगाव",
@@ -260,9 +305,41 @@
             "27100503602": "शुक्राचार्य विद्यालय मिरेगाव"
         };
 
+        const marathiMonths = ["जानेवारी", "फेब्रुवारी", "मार्च", "एप्रिल", "मे", "जून", "जुलै", "ऑगस्ट", "सप्टेंबर", "ऑक्टोबर", "नोव्हेंबर", "डिसेंबर"];
+
         let dbData = [];
         let lockedMonthsArray = [];
         let currentSchool = null;
+        let globalActiveMonth = ""; // Set by CRC
+        let syncInterval = null;
+
+        // Initialize Month Dropdowns
+        function initDropdowns() {
+            let filterSelect = document.getElementById("filterMonth");
+            let formSelect = document.getElementById("formMonth");
+            let activeSelect = document.getElementById("activeMonthSelect");
+            
+            filterSelect.innerHTML = '<option value="सर्व">-- सर्व महिने --</option>';
+            formSelect.innerHTML = '';
+            activeSelect.innerHTML = '';
+
+            marathiMonths.forEach(m => {
+                filterSelect.innerHTML += `<option value="${m}">${m}</option>`;
+                formSelect.innerHTML += `<option value="${m}">${m}</option>`;
+                activeSelect.innerHTML += `<option value="${m}">${m}</option>`;
+            });
+            
+            // Set default current month based on system time roughly
+            let currentSystemMonth = marathiMonths[new Date().getMonth()];
+            document.getElementById('formMonth').value = currentSystemMonth;
+            document.getElementById('filterMonth').value = currentSystemMonth;
+            document.getElementById('activeMonthSelect').value = currentSystemMonth;
+        }
+
+        window.onload = function() {
+            initDropdowns();
+            fetchDataFromAPI(); // Initial fetch to get settings and data
+        };
 
         function showLoading(show) {
             document.getElementById('loader').style.display = show ? 'block' : 'none';
@@ -278,26 +355,45 @@
             if(sectionId === 'crcLogin') document.getElementById('btnCrcLogin').classList.add('active');
             
             document.getElementById('previewArea').style.display = 'none';
+            
+            // Stop syncing if not in CRC dashboard
+            if (sectionId !== 'crcDashboard' && syncInterval) {
+                clearInterval(syncInterval);
+                syncInterval = null;
+            }
         }
 
         // --- API Calls ---
         async function fetchDataFromAPI(callback) {
-            showLoading(true);
+            if(!document.getElementById('loader').style.display || document.getElementById('loader').style.display === 'none') {
+                 // Only show loader if it's an explicit manual refresh, not background sync
+                 showLoading(true);
+            }
             try {
                 let response = await fetch(scriptURL);
                 let result = await response.json();
                 dbData = result.data || [];
                 lockedMonthsArray = result.locked || [];
+                globalActiveMonth = result.activeMonth || marathiMonths[new Date().getMonth()]; // Get active month from server
+                
+                updateCrcDashboardUI();
+                
+                if(currentSchool && document.getElementById('schoolForm').classList.contains('active')) {
+                    checkDuplicateEntry();
+                }
+
                 if(callback) callback();
                 else renderCrcTable();
             } catch (e) {
-                console.error(e);
-                alert("सर्व्हरवरून माहिती मिळवण्यात त्रुटी आली. इंटरनेट कनेक्शन तपासा.");
+                console.error("Sync Error:", e);
+                // Don't alert on background sync failure to avoid annoying user
             }
             showLoading(false);
         }
 
         async function submitDataToAPI() {
+            if(!validateForm()) return;
+
             let entry = {
                 id: Date.now(),
                 udise: currentSchool.udise,
@@ -323,21 +419,32 @@
                 let result = await response.json();
                 if(result.status === "success") {
                     alert("माहिती यशस्वीरित्या सर्व्हरवर जतन झाली!");
+                    // Refresh local data immediately
+                    dbData.push(entry); 
                     showSection('welcome');
+                } else {
+                    alert("माहिती सेव्ह करताना त्रुटी: " + (result.message || "Unknown error"));
                 }
             } catch (e) {
-                alert("माहिती सेव्ह करताना त्रुटी आली.");
+                alert("सर्व्हरशी संपर्क होऊ शकला नाही.");
             }
             showLoading(false);
         }
 
-        async function lockMonthInAPI() {
-            let payload = { action: "lock", lockedMonths: lockedMonthsArray };
+        async function updateSettingsInAPI(settingsType) {
+            let payload = { action: "updateSettings" };
+            if (settingsType === 'lock') {
+                payload.lockedMonths = lockedMonthsArray;
+            } else if (settingsType === 'activeMonth') {
+                payload.activeMonth = globalActiveMonth;
+            }
+
             showLoading(true);
             try {
                 await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
             } catch (e) {
-                console.error(e);
+                console.error("Settings Update Error:", e);
+                alert("सेटिंग्ज जतन करताना त्रुटी आली.");
             }
             showLoading(false);
         }
@@ -351,23 +458,86 @@
                 document.getElementById('currentSchoolName').innerText = schoolsDB[udise];
                 document.getElementById('schoolLoginError').style.display = 'none';
                 
-                // Fetch latest lock status before entering data
-                fetchDataFromAPI(() => { showSection('schoolForm'); });
+                fetchDataFromAPI(() => { 
+                    // Force the form month to the active month set by CRC
+                    if(globalActiveMonth) {
+                        document.getElementById('formMonth').value = globalActiveMonth;
+                    }
+                    showSection('schoolForm'); 
+                    checkDuplicateEntry();
+                });
             } else {
                 document.getElementById('schoolLoginError').style.display = 'block';
             }
         }
 
-        function previewData() {
+        function checkDuplicateEntry() {
+            if(!currentSchool) return;
+            
             let year = document.getElementById('formYear').value;
             let month = document.getElementById('formMonth').value;
-            let monthKey = `${year}-${month}`;
             
+            // 1. Check if CRC has locked this month
+            let monthKey = `${year}-${month}`;
             if(lockedMonthsArray.includes(monthKey)) {
-                alert(`CRC ने ${month} ${year} महिन्याची माहिती लॉक केली आहे. आपण आता माहिती भरू/बदलवू शकत नाही.`);
+                disableForm(`CRC ने ${month} ${year} महिन्याची माहिती लॉक केली आहे.`);
                 return;
             }
 
+            // 2. Check if this school has already submitted for this month/year
+            let existingEntry = dbData.find(d => d.udise === currentSchool.udise && d.year == year && d.month === month);
+            
+            if(existingEntry) {
+                document.getElementById('duplicateEntryAlert').style.display = 'block';
+                document.getElementById('dataEntryFields').style.opacity = '0.5';
+                document.getElementById('dataEntryFields').style.pointerEvents = 'none'; // Disable interactions
+                // Pre-fill data to show what they submitted
+                document.getElementById('formMobile').value = existingEntry.mobile;
+                document.getElementById('formPendingPrev').value = existingEntry.pendingPrev;
+                document.getElementById('formBonafide').value = existingEntry.bonafide;
+                document.getElementById('formMarklist').value = existingEntry.marklist;
+                document.getElementById('formTc').value = existingEntry.tc;
+                document.getElementById('formPendingEnd').value = existingEntry.pendingEnd;
+            } else {
+                enableForm();
+                // Clear previous inputs if it's a new entry
+                document.getElementById('formMobile').value = "";
+                document.getElementById('formPendingPrev').value = "0";
+                document.getElementById('formBonafide').value = "0";
+                document.getElementById('formMarklist').value = "0";
+                document.getElementById('formTc').value = "0";
+                document.getElementById('formPendingEnd').value = "0";
+            }
+        }
+
+        function disableForm(message) {
+            document.getElementById('duplicateEntryAlert').innerHTML = `<strong>सूचना:</strong> ${message}`;
+            document.getElementById('duplicateEntryAlert').style.display = 'block';
+            document.getElementById('dataEntryFields').style.opacity = '0.5';
+            document.getElementById('dataEntryFields').style.pointerEvents = 'none';
+        }
+
+        function enableForm() {
+            document.getElementById('duplicateEntryAlert').style.display = 'none';
+            document.getElementById('dataEntryFields').style.opacity = '1';
+            document.getElementById('dataEntryFields').style.pointerEvents = 'auto';
+        }
+
+        function validateForm() {
+            let mobile = document.getElementById('formMobile').value;
+            if(!mobile || mobile.length !== 10) {
+                alert("कृपया 10 अंकी वैध मोबाईल नंबर टाका.");
+                return false;
+            }
+            return true;
+        }
+
+        function previewData() {
+            if(!validateForm()) return;
+
+            let year = document.getElementById('formYear').value;
+            let month = document.getElementById('formMonth').value;
+            
             let html = `<b>महिना व वर्ष:</b> ${month} ${year}<br>
                         <b>मोबाईल:</b> ${document.getElementById('formMobile').value}<br>
                         <b>मागील प्रलंबित:</b> ${document.getElementById('formPendingPrev').value}<br>
@@ -383,13 +553,34 @@
         function loginCrc() {
             let id = document.getElementById('loginCrcId').value;
             let pass = document.getElementById('loginCrcPass').value;
-            if(id === 'admin' && pass === '9999') {
+            if(id === 'admin' && pass === '1234') {
                 document.getElementById('crcLoginError').style.display = 'none';
                 showSection('crcDashboard');
-                fetchDataFromAPI(); // Load data from Google Sheets
+                fetchDataFromAPI(() => {
+                    // Start live sync every 15 seconds when in dashboard
+                    syncInterval = setInterval(() => {
+                        fetchDataFromAPI();
+                    }, 15000); 
+                });
             } else {
                 document.getElementById('crcLoginError').style.display = 'block';
             }
+        }
+
+        function setActiveMonth() {
+            let selectedMonth = document.getElementById('activeMonthSelect').value;
+            globalActiveMonth = selectedMonth;
+            updateSettingsInAPI('activeMonth');
+            updateCrcDashboardUI();
+            alert(`शाळांसाठी माहिती भरण्याचा महिना "${selectedMonth}" सेट केला आहे.`);
+        }
+
+        function updateCrcDashboardUI() {
+            if(globalActiveMonth) {
+                document.getElementById('currentActiveMonthDisplay').innerText = `चालू महिना (शाळांसाठी): ${globalActiveMonth}`;
+                document.getElementById('activeMonthSelect').value = globalActiveMonth;
+            }
+            renderCrcTable();
         }
 
         function renderCrcTable() {
@@ -398,7 +589,6 @@
             let tbody = document.getElementById('crcTableBody');
             tbody.innerHTML = '';
 
-            let filteredData = dbData.filter(s => String(s.year) === String(fYear) && (fMonth === 'सर्व' || s.month === fMonth));
             let monthKey = `${fYear}-${fMonth}`;
             let isLocked = lockedMonthsArray.includes(monthKey);
             
@@ -411,21 +601,58 @@
                 lockBtn.style.display = 'none';
             }
 
-            if(filteredData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="11">या महिन्याची कोणतीही माहिती उपलब्ध नाही.</td></tr>`;
-                return;
+            // Create a list of all schools and match submitted data
+            let totalSchoolsCount = Object.keys(schoolsDB).length;
+            let submittedCount = 0;
+
+            // Sort schools by UDISE for consistent display
+            let sortedUdise = Object.keys(schoolsDB).sort();
+
+            sortedUdise.forEach(udise => {
+                let schoolName = schoolsDB[udise];
+                
+                // Find if this school submitted data for the filtered month/year
+                // If filter is "सर्व", we just show all submissions and skip progress tracking for specific month
+                let submissionsForSchool = dbData.filter(d => d.udise === udise && String(d.year) === String(fYear) && (fMonth === 'सर्व' || d.month === fMonth));
+
+                if(submissionsForSchool.length > 0) {
+                    submissionsForSchool.forEach(d => {
+                        submittedCount++;
+                        let status = isLocked ? `<span class="status-badge status-locked">Locked</span>` : `<span class="status-badge status-submitted">Submitted</span>`;
+                        let row = `<tr>
+                            <td>${d.udise}</td><td>${d.schoolName}</td><td>${d.year}</td><td>${d.month}</td>
+                            <td>${d.mobile}</td><td>${d.pendingPrev}</td><td>${d.bonafide}</td>
+                            <td>${d.marklist}</td><td>${d.tc}</td><td>${d.pendingEnd}</td>
+                            <td>${status}</td>
+                        </tr>`;
+                        tbody.innerHTML += row;
+                    });
+                } else if (fMonth !== 'सर्व') {
+                    // Show pending status if a specific month is selected and school hasn't submitted
+                    let row = `<tr style="background-color: #fffaf0;">
+                        <td>${udise}</td><td>${schoolName}</td><td>${fYear}</td><td>${fMonth}</td>
+                        <td>-</td><td>-</td><td>-</td>
+                        <td>-</td><td>-</td><td>-</td>
+                        <td><span class="status-badge status-pending">Pending</span></td>
+                    </tr>`;
+                    tbody.innerHTML += row;
+                }
+            });
+
+            if(tbody.innerHTML === '' && fMonth === 'सर्व') {
+                 tbody.innerHTML = `<tr><td colspan="11">कोणतीही माहिती उपलब्ध नाही.</td></tr>`;
             }
 
-            filteredData.forEach(d => {
-                let status = isLocked ? `<span class="status-badge status-locked">Locked</span>` : `<span class="status-badge status-submitted">Submitted</span>`;
-                let row = `<tr>
-                    <td>${d.udise}</td><td>${d.schoolName}</td><td>${d.year}</td><td>${d.month}</td>
-                    <td>${d.mobile}</td><td>${d.pendingPrev}</td><td>${d.bonafide}</td>
-                    <td>${d.marklist}</td><td>${d.tc}</td><td>${d.pendingEnd}</td>
-                    <td>${status}</td>
-                </tr>`;
-                tbody.innerHTML += row;
-            });
+            // Update Progress UI (Only makes sense when a specific month is selected)
+            if(fMonth !== 'सर्व') {
+                document.getElementById('totalSchoolsProgress').innerText = totalSchoolsCount;
+                document.getElementById('submittedSchoolsProgress').innerText = submittedCount;
+                document.getElementById('pendingSchoolsProgress').innerText = totalSchoolsCount - submittedCount;
+            } else {
+                document.getElementById('totalSchoolsProgress').innerText = "-";
+                document.getElementById('submittedSchoolsProgress').innerText = "-";
+                document.getElementById('pendingSchoolsProgress').innerText = "-";
+            }
         }
 
         function lockCurrentMonth() {
@@ -444,8 +671,8 @@
                 alert(`${month} ${year} लॉक केला गेला आहे.`);
             }
             
+            updateSettingsInAPI('lock');
             renderCrcTable();
-            lockMonthInAPI(); // Update Google Sheets Settings
         }
 
         // --- Export Functions ---
