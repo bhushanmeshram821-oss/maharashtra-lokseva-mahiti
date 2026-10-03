@@ -456,7 +456,6 @@
             }
         }
 
-        // --- API Calls ---
         async function fetchDataFromAPI(callback, isManualRefresh = true) {
             if(isManualRefresh && document.getElementById('loader').style.display !== 'flex') {
                  showLoading(true);
@@ -541,7 +540,6 @@
             showLoading(false);
         }
 
-        // --- School Functions ---
         function loginSchool() {
             let udise = document.getElementById('loginUdise').value.trim();
             if(schoolsDB[udise]) {
@@ -653,7 +651,6 @@
             document.getElementById('previewArea').style.display = 'block';
         }
 
-        // --- CRC Functions ---
         function loginCrc() {
             let id = document.getElementById('loginCrcId').value;
             let pass = document.getElementById('loginCrcPass').value;
@@ -795,7 +792,6 @@
             }
         }
 
-        // --- EXPORT FUNCTIONS ---
         function prepareExportData() {
             let fMonth = document.getElementById('filterMonth').value;
             let fYear = document.getElementById('filterYear').value;
@@ -873,7 +869,7 @@
             XLSX.writeFile(wb, `Lokseva_Report_${exportData.month}_${exportData.year}.xlsx`);
         }
 
-        // --- NEW PDF EXPORT FUNCTION (100% FIXED) ---
+        // --- NEW PDF EXPORT FUNCTION (Live Sync Pause Solution) ---
         function exportPDF() {
             let exportData = prepareExportData();
             if(!exportData) {
@@ -884,6 +880,12 @@
             if (typeof html2pdf === 'undefined') {
                 alert("PDF लायब्ररी लोड होऊ शकली नाही. कृपया पेज रिफ्रेश करा.");
                 return;
+            }
+
+            // 🛑 महत्त्वाचा बदल: PDF तयार होईपर्यंत Live Sync थांबवा!
+            if (syncInterval) {
+                clearInterval(syncInterval);
+                syncInterval = null;
             }
 
             showLoading(true, "PDF तयार होत आहे... कृपया थांबा");
@@ -940,31 +942,33 @@
             
             let element = document.getElementById('hiddenPdfContainer');
             
-            // हा सगळ्यात महत्त्वाचा बदल आहे. टेबल पूर्णपणे स्क्रीनवर दिसेल, पण त्यावर 'लोडिंग स्क्रीन' असल्यामुळे तुम्हाला काही वेगळं दिसणार नाही!
             element.style.display = 'block'; 
             element.style.position = 'static'; 
             element.style.margin = '0 auto';
             
-            // टेबल स्क्रीनवर आल्यावर ब्राउझरला तो कॅप्चर करण्यासाठी अर्धा सेकंद थांबू द्या
             setTimeout(() => {
                 var opt = {
                   margin:       10,
                   filename:     `Lokseva_Report_${exportData.month}_${exportData.year}.pdf`,
                   image:        { type: 'jpeg', quality: 0.98 },
-                  html2canvas:  { scale: 2, useCORS: true }, // windowWidth हटवला आहे त्यामुळे आता कुठेही एरर येणार नाही
+                  html2canvas:  { scale: 2, useCORS: true }, 
                   jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
                 };
 
                 html2pdf().set(opt).from(element).save().then(() => {
-                    element.style.display = 'none'; // काम झाल्यावर पुन्हा लपवा
+                    element.style.display = 'none'; 
                     showLoading(false);
+                    // 🟢 PDF डाऊनलोड झाल्यावर Live Sync पुन्हा सुरू करा
+                    syncInterval = setInterval(() => { fetchDataFromAPI(null, false); }, 10000);
                 }).catch(err => {
                     console.error("PDF Error:", err);
                     alert("PDF तयार करताना काही अडचण आली.");
                     element.style.display = 'none';
                     showLoading(false);
+                    // 🟢 एरर आल्यास Live Sync पुन्हा सुरू करा
+                    syncInterval = setInterval(() => { fetchDataFromAPI(null, false); }, 10000);
                 });
-            }, 500); // 500ms Time Delay
+            }, 500); 
         }
     </script>
 </body>
