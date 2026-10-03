@@ -4,279 +4,330 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>महाराष्ट्र लोकसेवा हक्क माहिती प्रणाली</title>
+    <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #f0f4f8; color: #333; }
-        header { background-color: #0056b3; color: white; padding: 15px 20px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .container { max-width: 1000px; margin: 20px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h2, h3 { color: #0056b3; text-align: center; border-bottom: 2px solid #e1e8ed; padding-bottom: 10px; }
+        /* Base Styles */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #f4f7f6; color: #333; }
+        header { background: linear-gradient(135deg, #0056b3, #004494); color: white; padding: 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+        header h1 { margin: 0; font-size: 24px; }
+        header p { margin: 5px 0 0; font-size: 14px; opacity: 0.9; }
         
-        .nav-buttons { text-align: center; margin-bottom: 20px; }
-        .nav-buttons button { padding: 10px 20px; margin: 0 10px; font-size: 16px; cursor: pointer; background-color: #e9ecef; border: 1px solid #ccc; border-radius: 4px; transition: 0.3s; }
-        .nav-buttons button.active { background-color: #0056b3; color: white; border-color: #0056b3; }
+        .container { max-width: 900px; margin: 30px auto; padding: 25px; background: white; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+        h2, h3 { color: #0056b3; text-align: center; border-bottom: 2px solid #eef2f5; padding-bottom: 12px; margin-bottom: 20px; }
         
-        .section { display: none; }
+        /* Navigation Buttons */
+        .nav-buttons { text-align: center; margin-bottom: 30px; display: flex; justify-content: center; gap: 15px; }
+        .nav-buttons button { padding: 12px 25px; font-size: 16px; font-weight: 600; cursor: pointer; background-color: #fff; color: #555; border: 2px solid #e0e6ed; border-radius: 8px; transition: all 0.3s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .nav-buttons button:hover { border-color: #0056b3; color: #0056b3; transform: translateY(-2px); }
+        .nav-buttons button.active { background-color: #0056b3; color: white; border-color: #0056b3; box-shadow: 0 4px 10px rgba(0, 86, 179, 0.3); transform: translateY(-2px); }
+        
+        /* Sections */
+        .section { display: none; animation: fadeIn 0.4s ease; }
         .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Form Group Styles */
-        .form-group { 
+        /* Form Card Styles (New Look) */
+        .form-card { 
+            background: #fff; 
+            padding: 18px 20px; 
             margin-bottom: 15px; 
-            padding: 15px; 
-            border-radius: 6px;
-            border: 1px solid #ddd;
+            border-radius: 10px; 
+            border: 1px solid #eef2f5;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border-left: 5px solid #0056b3;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
+        .form-card:hover { transform: translateX(3px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
         
-        /* Colorful Form Groups */
-        .color-1 { background-color: #e8f4f8; } /* Light Blue */
-        .color-2 { background-color: #f8f4e6; } /* Light Yellow */
-        .color-3 { background-color: #f0f8e8; } /* Light Green */
-        .color-4 { background-color: #f8e8e8; } /* Light Red */
-        .color-5 { background-color: #f4e8f8; } /* Light Purple */
-        .color-6 { background-color: #e8f8f4; } /* Light Teal */
-        .color-7 { background-color: #fff0e6; } /* Light Orange */
-        .color-8 { background-color: #e6f0ff; } /* Light Sky Blue */
-
-        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #444; }
-        .form-group input, .form-group select { 
+        .form-card label { display: block; margin-bottom: 10px; font-weight: 600; color: #2c3e50; font-size: 15px; }
+        .form-card input, .form-card select { 
             width: 100%; 
-            padding: 10px; 
-            border: 1px solid #ccc; 
-            border-radius: 4px; 
+            padding: 12px 15px; 
+            border: 1px solid #dce4ec; 
+            border-radius: 6px; 
             box-sizing: border-box; 
-            font-size: 14px;
+            font-size: 16px;
+            background-color: #f9fbfc;
+            transition: border-color 0.3s, background-color 0.3s;
         }
+        .form-card input:focus, .form-card select:focus { border-color: #0056b3; background-color: #fff; outline: none; box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1); }
 
-        /* Remove Number Input Arrows (Spinners) */
-        input[type="number"]::-webkit-outer-spin-button,
-        input[type="number"]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        input[type="number"] {
-            -moz-appearance: textfield; /* Firefox */
-        }
+        /* Remove Number Input Arrows */
+        input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"] { -moz-appearance: textfield; }
         
-        .btn { padding: 10px 15px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; width: 100%; margin-top: 10px;}
-        .btn:hover { background-color: #218838; }
+        /* Buttons */
+        .btn { padding: 12px 20px; font-weight: bold; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; width: 100%; margin-top: 15px; transition: all 0.3s ease; }
+        .btn-success { background-color: #28a745; box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3); }
+        .btn-success:hover { background-color: #218838; transform: translateY(-1px); }
+        .btn-primary { background-color: #0056b3; box-shadow: 0 4px 10px rgba(0, 86, 179, 0.3); }
+        .btn-primary:hover { background-color: #004494; transform: translateY(-1px); }
         .btn-secondary { background-color: #6c757d; }
         .btn-secondary:hover { background-color: #5a6268; }
-        .btn-danger { background-color: #dc3545; width: auto; padding: 5px 10px;}
-        .btn-export { background-color: #17a2b8; width: auto; display: inline-block; margin: 5px; }
+        .btn-danger { background-color: #dc3545; color: white; border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer; font-size: 14px; transition: 0.2s; }
+        .btn-danger:hover { background-color: #c82333; }
+        .btn-warning { background-color: #ffc107; color: #212529; box-shadow: 0 4px 10px rgba(255, 193, 7, 0.3); }
+        .btn-warning:hover { background-color: #e0a800; transform: translateY(-1px); }
+        .btn-action { width: auto; display: inline-flex; align-items: center; gap: 5px; margin: 5px; padding: 8px 15px; font-size: 14px; border-radius: 20px; background-color: #f8f9fa; color: #333; border: 1px solid #ced4da; font-weight: normal;}
+        .btn-action:hover { background-color: #e2e6ea; }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-        th { background-color: #0056b3; color: white; }
-        tr:nth-child(even) { background-color: #f8f9fa; }
-        
-        .login-box { max-width: 400px; margin: 50px auto; }
-        .status-badge { padding: 3px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; }
-        .status-submitted { background-color: #d4edda; color: #155724; }
-        .status-locked { background-color: #f8d7da; color: #721c24; }
-        .status-pending { background-color: #fff3cd; color: #856404; }
-
-        #previewArea { background: #e9ecef; padding: 15px; border-radius: 4px; margin-top: 15px; display: none; border-left: 4px solid #0056b3;}
-        
-        /* Loading Overlay */
-        #loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 9999; text-align: center; padding-top: 20%; font-size: 24px; color: #0056b3; font-weight: bold; }
-        
-        /* Progress Status */
-        .progress-box {
-            display: flex;
-            justify-content: space-around;
-            background: #f8f9fa;
+        /* School Info Display (Centered) */
+        .school-info-banner {
+            background: linear-gradient(to right, #e8f4f8, #f0f8e8);
             padding: 15px;
             border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #dee2e6;
+            text-align: center;
+            border: 1px solid #d1e7dd;
+            margin-bottom: 25px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
         }
-        .progress-item { text-align: center; }
-        .progress-number { font-size: 24px; font-weight: bold; color: #0056b3; }
-        .progress-label { font-size: 14px; color: #6c757d; }
+        .school-info-banner .udise-text { font-size: 18px; color: #555; margin-bottom: 5px; }
+        .school-info-banner .school-name-text { font-size: 22px; font-weight: bold; color: #0056b3; margin: 0; }
+        
+        /* Table Styles */
+        .table-responsive { overflow-x: auto; margin-top: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; background: white; }
+        th, td { border: 1px solid #eef2f5; padding: 12px 15px; text-align: center; vertical-align: middle; }
+        th { background-color: #f8f9fa; color: #495057; font-weight: 600; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
+        tr:nth-child(even) { background-color: #fdfdfe; }
+        tr:hover { background-color: #f1f5f9; }
+        
+        .login-box { max-width: 450px; margin: 40px auto; padding: 30px; background: #fff; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        
+        /* Badges */
+        .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; display: inline-block; }
+        .status-submitted { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .status-locked { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .status-pending { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .status-requested { background-color: #cce5ff; color: #004085; border: 1px solid #b8daff; }
 
-        .alert-warning {
-            background-color: #fff3cd;
-            color: #856404;
-            padding: 15px;
-            border: 1px solid #ffeeba;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            display: none;
-        }
+        #previewArea { background: #e8f4f8; padding: 20px; border-radius: 8px; margin-top: 20px; display: none; border: 1px solid #bee5eb; }
+        
+        /* Loading Overlay */
+        #loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 9999; text-align: center; padding-top: 25vh; font-size: 22px; color: #0056b3; font-weight: bold; flex-direction: column; align-items: center; }
+        .spinner { border: 5px solid #f3f3f3; border-top: 5px solid #0056b3; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Progress Status */
+        .progress-box { display: flex; justify-content: space-around; background: white; padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eef2f5; }
+        .progress-item { text-align: center; padding: 10px; }
+        .progress-number { font-size: 28px; font-weight: 800; color: #34495e; line-height: 1; margin-bottom: 5px; }
+        .progress-label { font-size: 13px; color: #7f8c8d; font-weight: 600; text-transform: uppercase; }
+
+        .alert-warning { background-color: #fff3cd; color: #856404; padding: 15px 20px; border-left: 5px solid #ffeeba; border-radius: 6px; margin-bottom: 20px; display: none; font-size: 15px; }
+        .alert-info { background-color: #d1ecf1; color: #0c5460; padding: 15px 20px; border-left: 5px solid #bee5eb; border-radius: 6px; margin-bottom: 20px; display: none; font-size: 15px; }
+        
+        /* Hidden Admin Trigger */
+        .admin-trigger { position: fixed; bottom: 10px; right: 10px; opacity: 0.1; cursor: pointer; font-size: 12px; padding: 10px; z-index: 100; transition: opacity 0.3s; }
+        .admin-trigger:hover { opacity: 0.5; }
     </style>
 </head>
 <body>
 
-    <div id="loader">कृपया प्रतीक्षा करा... डेटा सिंक्रोनाइझ होत आहे...</div>
+    <div id="loader">
+        <div class="spinner"></div>
+        <div>कृपया प्रतीक्षा करा...⏳<br><small style="font-size: 14px; color: #666; font-weight: normal;">डेटा सिंक होत आहे 🔄</small></div>
+    </div>
 
     <header>
-        <h1>महाराष्ट्र लोकसेवा हक्क माहिती प्रणाली</h1>
-        <p>शाळा व केंद्र समन्वयक (CRC) ऑनलाइन पोर्टल</p>
+        <h1>📄 महाराष्ट्र लोकसेवा हक्क माहिती प्रणाली</h1>
+        <p>🏫 शाळा व केंद्र समन्वयक (CRC) ऑनलाइन पोर्टल</p>
     </header>
 
     <div class="container">
         <div class="nav-buttons">
-            <button id="btnHome" class="active" onclick="showSection('welcome')">स्वागत</button>
-            <button id="btnSchoolLogin" onclick="showSection('schoolLogin')">शाळा लॉगिन</button>
-            <button id="btnCrcLogin" onclick="showSection('crcLogin')">CRC लॉगिन</button>
+            <button id="btnHome" class="active" onclick="showSection('welcome')">🏠 स्वागत</button>
+            <button id="btnSchoolLogin" onclick="showSection('schoolLogin')">🔑 शाळा लॉगिन</button>
+            <!-- CRC Login button removed from main nav to hide it -->
         </div>
 
         <!-- 1. Welcome Section -->
         <div id="welcome" class="section active">
-            <h2>प्रणालीमध्ये आपले स्वागत आहे!</h2>
-            <p style="text-align: center; line-height: 1.6;">
-                या प्रणालीद्वारे शाळांना दरमहा लोकसेवा हक्कांतर्गत दिलेले दाखले व प्रलंबित अर्जांची माहिती भरायची आहे.<br>
-                सर्व माहिती थेट सर्व्हरवर (Google Sheets Database) सुरक्षित केली जाते.
-            </p>
+            <h2>प्रणालीमध्ये आपले स्वागत आहे! 👋</h2>
+            <div style="text-align: center; line-height: 1.8; color: #555; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                <p>या प्रणालीद्वारे शाळांना दरमहा लोकसेवा हक्कांतर्गत दिलेले दाखले व प्रलंबित अर्जांची माहिती भरायची आहे. 📋</p>
+                <p>माहिती भरण्यासाठी <b>'🔑 शाळा लॉगिन'</b> वर क्लिक करा आणि तुमचा UDISE क्रमांक टाका.</p>
+            </div>
         </div>
 
         <!-- 2. School Login -->
         <div id="schoolLogin" class="section login-box">
-            <h3>शाळा लॉगिन</h3>
-            <div class="form-group color-1">
-                <label>शाळेचा UDISE क्रमांक</label>
-                <input type="text" id="loginUdise" placeholder="UDISE Code टाका">
+            <h3>🏫 शाळा लॉगिन</h3>
+            <div class="form-card" style="border-left-color: #17a2b8;">
+                <label>शाळेचा UDISE क्रमांक 🔢</label>
+                <input type="text" id="loginUdise" placeholder="उदा. 27100503201">
             </div>
-            <button class="btn" onclick="loginSchool()">लॉगिन करा</button>
-            <p id="schoolLoginError" style="color:red; display:none;">चुकीचा UDISE किंवा शाळा नोंदणीकृत नाही.</p>
+            <button class="btn btn-primary" onclick="loginSchool()">पुढे जा ➡️</button>
+            <p id="schoolLoginError" style="color:#dc3545; display:none; text-align: center; margin-top: 15px; font-weight: bold; background: #f8d7da; padding: 10px; border-radius: 6px;">❌ चुकीचा UDISE क्रमांक किंवा शाळा नोंदणीकृत नाही.</p>
         </div>
 
         <!-- 3. School Data Entry Form -->
         <div id="schoolForm" class="section">
-            <h3 id="schoolFormTitle">माहिती भरा</h3>
+            <h3 id="schoolFormTitle" style="display: none;">📝 माहिती भरा</h3>
             
             <div id="duplicateEntryAlert" class="alert-warning">
-                <strong>सूचना:</strong> तुम्ही या महिन्याची माहिती आधीच भरली आहे. तुम्ही फक्त एकदाच माहिती भरू शकता.
+                <strong>⚠️ सूचना:</strong> तुम्ही या महिन्याची माहिती आधीच भरली आहे. तुम्ही फक्त एकदाच माहिती भरू शकता.
             </div>
 
-            <p style="text-align: right; background-color:#f8f9fa; padding:10px; border-radius:4px; border:1px solid #ddd;">
-                <b>UDISE:</b> <span id="currentUdise"></span> | <b>शाळा:</b> <span id="currentSchoolName"></span>
-            </p>
+            <div id="editRequestAlert" class="alert-info">
+                <strong>📩 विनंती पाठवली:</strong> माहिती बदलण्याची विनंती प्रशासनाला पाठवली आहे. प्रशासनाने ती स्वीकारल्यावर तुम्ही नवीन माहिती भरू शकाल.
+            </div>
+
+            <!-- Centered School Information Banner -->
+            <div class="school-info-banner">
+                <div class="udise-text">🔢 UDISE: <b id="currentUdise"></b></div>
+                <h3 class="school-name-text" id="currentSchoolName"></h3>
+            </div>
             
             <div id="dataEntryFields">
-                <div class="form-group color-1">
-                    <label>वर्ष</label>
-                    <select id="formYear" onchange="checkDuplicateEntry()">
-                        <option value="2026">2026</option>
-                        <option value="2027">2027</option>
-                    </select>
+                <div class="form-card" style="border-left-color: #6c5ce7;">
+                    <label>📅 माहितीचे वर्ष व महिना</label>
+                    <div style="display: flex; gap: 10px;">
+                        <select id="formMonth" onchange="checkDuplicateEntry()" style="flex: 2;"></select>
+                        <select id="formYear" onchange="checkDuplicateEntry()" style="flex: 1;">
+                            <option value="2026">2026</option>
+                            <option value="2027">2027</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="form-group color-2">
-                    <label>महिना</label>
-                    <select id="formMonth" onchange="checkDuplicateEntry()">
-                        <!-- Options will be populated by JS -->
-                    </select>
+                
+                <div class="form-card" style="border-left-color: #00b894;">
+                    <label>📱 माहिती भरणाऱ्या व्यक्तीचा मोबाईल नंबर</label>
+                    <input type="number" id="formMobile" placeholder="10 अंकी मोबाईल नंबर">
                 </div>
-                <div class="form-group color-3">
-                    <label>माहिती भरणाऱ्या व्यक्तीचा मोबाईल नंबर</label>
-                    <input type="number" id="formMobile" placeholder="मोबाईल नंबर टाईप करा">
-                </div>
-                <div class="form-group color-4">
-                    <label>A) मागील महिन्यातील प्रलंबित अर्जांची संख्या</label>
+                
+                <div class="form-card" style="border-left-color: #e17055;">
+                    <label>⏳ A) मागील महिन्यातील प्रलंबित अर्जांची संख्या</label>
                     <input type="number" id="formPendingPrev" value="0">
                 </div>
-                <div class="form-group color-5">
-                    <label>1) या महिन्यात दिलेले बोनाफाईड (Bonafide)</label>
-                    <input type="number" id="formBonafide" value="0">
+                
+                <div style="background: #fdfdfe; border: 1px solid #eef2f5; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <h4 style="margin-top: 0; color: #444; border-bottom: 1px dashed #ccc; padding-bottom: 10px;">✅ या महिन्यात दिलेले दाखले:</h4>
+                    
+                    <div class="form-card" style="border-left-color: #0984e3; box-shadow: none; border-top: none; border-right: none; border-bottom: none; border-radius: 0; margin-bottom: 10px; padding: 10px 15px;">
+                        <label>1) बोनाफाईड (Bonafide) 📜</label>
+                        <input type="number" id="formBonafide" value="0">
+                    </div>
+                    
+                    <div class="form-card" style="border-left-color: #0984e3; box-shadow: none; border-top: none; border-right: none; border-bottom: none; border-radius: 0; margin-bottom: 10px; padding: 10px 15px;">
+                        <label>2) द्वितीय गुणपत्रक (Second Marklist) 📄</label>
+                        <input type="number" id="formMarklist" value="0">
+                    </div>
+                    
+                    <div class="form-card" style="border-left-color: #0984e3; box-shadow: none; border-top: none; border-right: none; border-bottom: none; border-radius: 0; margin-bottom: 0; padding: 10px 15px;">
+                        <label>3) शाळा सोडल्याचा दाखला (TC) 🚪</label>
+                        <input type="number" id="formTc" value="0">
+                    </div>
                 </div>
-                <div class="form-group color-6">
-                    <label>2) या महिन्यात दिलेले द्वितीय गुणपत्रक (Second Marklist)</label>
-                    <input type="number" id="formMarklist" value="0">
-                </div>
-                <div class="form-group color-7">
-                    <label>3) या महिन्यात दिलेला शाळा सोडल्याचा दाखला (TC)</label>
-                    <input type="number" id="formTc" value="0">
-                </div>
-                <div class="form-group color-8">
-                    <label>B) या महिन्याच्या शेवटी प्रलंबित अर्जांची संख्या</label>
+
+                <div class="form-card" style="border-left-color: #d63031;">
+                    <label>📌 B) या महिन्याच्या शेवटी प्रलंबित अर्जांची एकूण संख्या</label>
                     <input type="number" id="formPendingEnd" value="0">
                 </div>
 
-                <button class="btn btn-secondary" onclick="previewData()">माहिती तपासा (Preview)</button>
+                <button class="btn btn-primary" id="btnPreview" onclick="previewData()">👀 माहिती तपासा (Preview)</button>
+                <button class="btn btn-warning" id="btnRequestEdit" onclick="requestEdit()" style="display: none;">✏️ माहिती बदलण्यासाठी विनंती करा</button>
             </div>
 
             <div id="previewArea">
-                <h4 style="color:#0056b3; margin-top:0;">माहितीची पडताळणी करा</h4>
-                <p id="previewText" style="line-height:1.8;"></p>
-                <button class="btn" onclick="submitDataToAPI()">Final Submit (माहिती जतन करा)</button>
+                <h4 style="color:#0056b3; margin-top:0; border-bottom: 2px solid #b8daff; padding-bottom: 10px;">🔎 माहितीची पडताळणी करा</h4>
+                <div id="previewText" style="line-height:1.8; font-size: 15px; color: #333; background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);"></div>
+                <button class="btn btn-success" onclick="submitDataToAPI()">💾 Final Submit (माहिती जतन करा)</button>
             </div>
         </div>
 
-        <!-- 4. CRC Login -->
+        <!-- 4. CRC Login (Hidden from main navigation) -->
         <div id="crcLogin" class="section login-box">
-            <h3>केंद्र समन्वयक (CRC) लॉगिन</h3>
-            <div class="form-group color-1">
-                <label>CRC ID (वापरा: admin)</label>
+            <h3>🛡️ प्रशासन (Admin) लॉगिन</h3>
+            <div class="form-card" style="border-left-color: #2d3436;">
+                <label>Admin ID 👤</label>
                 <input type="text" id="loginCrcId">
             </div>
-            <div class="form-group color-2">
-                <label>Password (वापरा: 1234)</label>
+            <div class="form-card" style="border-left-color: #2d3436;">
+                <label>Password 🔐</label>
                 <input type="password" id="loginCrcPass">
             </div>
-            <button class="btn" onclick="loginCrc()">लॉगिन करा</button>
-            <p id="crcLoginError" style="color:red; display:none; margin-top:10px;">चुकीचा ID किंवा Password.</p>
+            <button class="btn btn-primary" onclick="loginCrc()">लॉगिन करा 🔓</button>
+            <p id="crcLoginError" style="color:red; display:none; margin-top:10px; text-align: center;">❌ चुकीचा ID किंवा Password.</p>
         </div>
 
         <!-- 5. CRC Dashboard -->
         <div id="crcDashboard" class="section">
-            <h3>CRC डॅशबोर्ड - एकत्रित अहवाल</h3>
+            <h3>📊 प्रशासन डॅशबोर्ड - एकत्रित अहवाल</h3>
             
             <div class="progress-box">
                 <div class="progress-item">
                     <div class="progress-number" id="totalSchoolsProgress">10</div>
-                    <div class="progress-label">एकूण शाळा</div>
+                    <div class="progress-label">🏫 एकूण शाळा</div>
                 </div>
                 <div class="progress-item">
                     <div class="progress-number" id="submittedSchoolsProgress" style="color: #28a745;">0</div>
-                    <div class="progress-label">माहिती भरलेल्या (चालू महिना)</div>
+                    <div class="progress-label">✅ माहिती भरलेल्या</div>
                 </div>
                 <div class="progress-item">
                     <div class="progress-number" id="pendingSchoolsProgress" style="color: #dc3545;">10</div>
-                    <div class="progress-label">माहिती बाकी</div>
+                    <div class="progress-label">⏳ माहिती बाकी</div>
                 </div>
             </div>
 
-            <div style="background: #e9ecef; padding: 15px; border-radius: 4px; margin-bottom: 15px;">
-                <label><b>फिल्टर:</b> </label>
-                <select id="filterYear" onchange="renderCrcTable()" style="padding:5px; border-radius:4px; border:1px solid #ccc;">
-                    <option value="2026">2026</option>
-                    <option value="2027">2027</option>
-                </select>
-                <select id="filterMonth" onchange="renderCrcTable()" style="padding:5px; border-radius:4px; border:1px solid #ccc;">
-                    <!-- Options populated by JS -->
-                </select>
-                <button class="btn btn-export" onclick="exportExcel()">Excel डाउनलोड</button>
-                <button class="btn btn-export" onclick="exportPDF()">PDF डाउनलोड</button>
-                <button class="btn btn-secondary" onclick="fetchDataFromAPI()" style="float: right; margin-left: 10px; padding: 6px 12px; margin-top:0;">लाईव्ह रिफ्रेश</button>
-                
-                <div style="margin-top: 10px; border-top: 1px solid #ccc; padding-top: 10px;">
-                    <label><b>माहिती भरण्यासाठी महिना सुरू करा (CRC Control):</b></label>
-                    <select id="activeMonthSelect" style="padding:5px; border-radius:4px; border:1px solid #ccc;">
-                         <!-- Options populated by JS -->
-                    </select>
-                    <button class="btn btn-secondary" onclick="setActiveMonth()" style="width: auto; padding: 5px 10px; margin-left: 10px;">हा महिना सेट करा</button>
-                    <span id="currentActiveMonthDisplay" style="margin-left: 15px; font-weight: bold; color: #28a745;"></span>
+            <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 1px solid #eef2f5;">
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: space-between;">
+                    
+                    <!-- Filters -->
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <span style="font-weight: bold; color: #555;">🔍 फिल्टर:</span>
+                        <select id="filterMonth" onchange="renderCrcTable()" style="padding:8px 12px; border-radius:6px; border:1px solid #ccc; font-size: 14px; background: #f8f9fa;"></select>
+                        <select id="filterYear" onchange="renderCrcTable()" style="padding:8px 12px; border-radius:6px; border:1px solid #ccc; font-size: 14px; background: #f8f9fa;">
+                            <option value="2026">2026</option><option value="2027">2027</option>
+                        </select>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button class="btn-action" onclick="fetchDataFromAPI()" title="डेटा रिफ्रेश करा">🔄 Refresh</button>
+                        <button class="btn-action" onclick="exportExcel()" title="Excel मध्ये डाउनलोड करा">📊 Excel</button>
+                        <button class="btn-action" onclick="exportPDF()" title="PDF मध्ये डाउनलोड करा">📄 PDF</button>
+                        <button class="btn-action" onclick="shareReport()" title="अहवाल शेअर करा">📤 Share</button>
+                    </div>
                 </div>
                 
-                <button class="btn btn-danger" id="btnLockMonth" onclick="lockCurrentMonth()" style="float: right; margin-top: -30px;">हा महिना Lock करा</button>
+                <hr style="border: 0; border-top: 1px dashed #ddd; margin: 15px 0;">
+                
+                <!-- Admin Controls -->
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: space-between; background: #fdfdfe; padding: 10px; border-radius: 8px;">
+                    <div>
+                        <span style="font-size: 13px; color: #666; display: block; margin-bottom: 5px;">⚙️ शाळांसाठी चालू महिना सेट करा:</span>
+                        <div style="display: flex; gap: 10px;">
+                            <select id="activeMonthSelect" style="padding:6px 10px; border-radius:4px; border:1px solid #ccc;"></select>
+                            <button onclick="setActiveMonth()" style="background: #e9ecef; border: 1px solid #ccc; padding: 6px 12px; border-radius: 4px; cursor: pointer;">सेट करा</button>
+                        </div>
+                    </div>
+                    <div>
+                        <span id="currentActiveMonthDisplay" style="font-size: 14px; font-weight: bold; color: #28a745; display: block; margin-bottom: 5px;"></span>
+                        <button id="btnLockMonth" onclick="lockCurrentMonth()" style="background: #ffc107; color: #000; border: none; padding: 8px 15px; border-radius: 4px; font-weight: bold; cursor: pointer;">हा महिना Lock करा 🔒</button>
+                    </div>
+                </div>
             </div>
 
-            <div style="overflow-x:auto;">
+            <!-- Data Table -->
+            <div class="table-responsive">
                 <table id="crcDataTable">
                     <thead>
                         <tr>
-                            <th>UDISE</th>
-                            <th>शाळेचे नाव</th>
-                            <th>वर्ष</th>
-                            <th>महिना</th>
-                            <th>मोबाईल</th>
-                            <th>मागील प्रलंबित</th>
-                            <th>Bonafide</th>
-                            <th>Marklist</th>
-                            <th>TC</th>
-                            <th>शेवटी प्रलंबित</th>
+                            <th>🔢 UDISE</th>
+                            <th style="min-width: 150px;">🏫 शाळेचे नाव</th>
+                            <th>📅 महिना</th>
+                            <th>📱 मोबाईल</th>
+                            <th title="मागील प्रलंबित">⏳ मागील प्र.</th>
+                            <th>📜 Bonafide</th>
+                            <th>📄 Marklist</th>
+                            <th>🚪 TC</th>
+                            <th title="शेवटी प्रलंबित">📌 शेवटी प्र.</th>
                             <th>स्थिती</th>
+                            <th style="min-width: 100px;">⚙️ कृती (Action)</th>
                         </tr>
                     </thead>
                     <tbody id="crcTableBody">
@@ -286,6 +337,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Hidden Trigger for Admin Login -->
+    <div class="admin-trigger" onclick="showSection('crcLogin')" title="Admin Access">🔒</div>
 
     <script>
         // === इथे तुमची Google Apps Script Web App URL टाका ===
@@ -310,10 +364,10 @@
         let dbData = [];
         let lockedMonthsArray = [];
         let currentSchool = null;
-        let globalActiveMonth = ""; // Set by CRC
+        let globalActiveMonth = ""; 
         let syncInterval = null;
+        let currentEntryId = null;
 
-        // Initialize Month Dropdowns
         function initDropdowns() {
             let filterSelect = document.getElementById("filterMonth");
             let formSelect = document.getElementById("formMonth");
@@ -329,7 +383,6 @@
                 activeSelect.innerHTML += `<option value="${m}">${m}</option>`;
             });
             
-            // Set default current month based on system time roughly
             let currentSystemMonth = marathiMonths[new Date().getMonth()];
             document.getElementById('formMonth').value = currentSystemMonth;
             document.getElementById('filterMonth').value = currentSystemMonth;
@@ -338,11 +391,11 @@
 
         window.onload = function() {
             initDropdowns();
-            fetchDataFromAPI(); // Initial fetch to get settings and data
+            fetchDataFromAPI();
         };
 
         function showLoading(show) {
-            document.getElementById('loader').style.display = show ? 'block' : 'none';
+            document.getElementById('loader').style.display = show ? 'flex' : 'none';
         }
 
         function showSection(sectionId) {
@@ -352,11 +405,9 @@
             
             if(sectionId === 'welcome') document.getElementById('btnHome').classList.add('active');
             if(sectionId === 'schoolLogin') document.getElementById('btnSchoolLogin').classList.add('active');
-            if(sectionId === 'crcLogin') document.getElementById('btnCrcLogin').classList.add('active');
             
             document.getElementById('previewArea').style.display = 'none';
             
-            // Stop syncing if not in CRC dashboard
             if (sectionId !== 'crcDashboard' && syncInterval) {
                 clearInterval(syncInterval);
                 syncInterval = null;
@@ -365,8 +416,7 @@
 
         // --- API Calls ---
         async function fetchDataFromAPI(callback) {
-            if(!document.getElementById('loader').style.display || document.getElementById('loader').style.display === 'none') {
-                 // Only show loader if it's an explicit manual refresh, not background sync
+            if(document.getElementById('loader').style.display !== 'flex') {
                  showLoading(true);
             }
             try {
@@ -374,7 +424,7 @@
                 let result = await response.json();
                 dbData = result.data || [];
                 lockedMonthsArray = result.locked || [];
-                globalActiveMonth = result.activeMonth || marathiMonths[new Date().getMonth()]; // Get active month from server
+                globalActiveMonth = result.activeMonth || marathiMonths[new Date().getMonth()];
                 
                 updateCrcDashboardUI();
                 
@@ -386,7 +436,6 @@
                 else renderCrcTable();
             } catch (e) {
                 console.error("Sync Error:", e);
-                // Don't alert on background sync failure to avoid annoying user
             }
             showLoading(false);
         }
@@ -395,7 +444,7 @@
             if(!validateForm()) return;
 
             let entry = {
-                id: Date.now(),
+                id: Date.now().toString(),
                 udise: currentSchool.udise,
                 schoolName: currentSchool.name,
                 year: document.getElementById('formYear').value,
@@ -405,46 +454,103 @@
                 bonafide: document.getElementById('formBonafide').value,
                 marklist: document.getElementById('formMarklist').value,
                 tc: document.getElementById('formTc').value,
-                pendingEnd: document.getElementById('formPendingEnd').value
+                pendingEnd: document.getElementById('formPendingEnd').value,
+                editRequest: false // New field
             };
 
             let payload = { action: "submit", data: entry };
             
             showLoading(true);
             try {
-                let response = await fetch(scriptURL, {
-                    method: 'POST',
-                    body: JSON.stringify(payload)
-                });
+                let response = await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
                 let result = await response.json();
                 if(result.status === "success") {
-                    alert("माहिती यशस्वीरित्या सर्व्हरवर जतन झाली!");
-                    // Refresh local data immediately
+                    alert("माहिती यशस्वीरित्या सर्व्हरवर जतन झाली! 🎉");
                     dbData.push(entry); 
                     showSection('welcome');
                 } else {
-                    alert("माहिती सेव्ह करताना त्रुटी: " + (result.message || "Unknown error"));
+                    alert("त्रुटी: " + (result.message || "Unknown error") + " ❌");
                 }
             } catch (e) {
-                alert("सर्व्हरशी संपर्क होऊ शकला नाही.");
+                alert("सर्व्हरशी संपर्क होऊ शकला नाही. 🌐❌");
+            }
+            showLoading(false);
+        }
+
+        async function requestEdit() {
+            if(!currentEntryId) return;
+            if(!confirm("तुम्हाला खात्री आहे का की माहिती बदलण्याची विनंती पाठवायची आहे? प्रशासनाने विनंती स्वीकारल्यावर तुम्ही नवीन माहिती भरू शकाल. 🤔")) return;
+            
+            let payload = { action: "requestEdit", rowId: currentEntryId };
+            showLoading(true);
+            try {
+                let response = await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
+                let result = await response.json();
+                if(result.status === "success") {
+                    alert("तुमची माहिती बदलण्याची विनंती प्रशासनाला पाठवण्यात आली आहे. 📩");
+                    fetchDataFromAPI(); // Refresh to show updated status
+                } else {
+                    alert("त्रुटी: " + result.message + " ❌");
+                }
+            } catch (e) {
+                alert("सर्व्हरशी संपर्क होऊ शकला नाही. 🌐❌");
+            }
+            showLoading(false);
+        }
+
+        async function approveEditRequest(entryId) {
+            if(!confirm("या शाळेची माहिती बदलण्याची विनंती स्वीकारायची आहे का? असे केल्यास त्यांची आधीची माहिती डिलीट होईल. 🗑️")) return;
+            
+            // Approving edit request means we delete the current entry so they can resubmit
+            let payload = { action: "reject", rowId: String(entryId) };
+            showLoading(true);
+            try {
+                let response = await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
+                let result = await response.json();
+                if(result.status === "success") {
+                    dbData = dbData.filter(d => String(d.id) !== String(entryId));
+                    renderCrcTable();
+                    alert("विनंती स्वीकारली गेली! आता शाळा नवीन माहिती भरू शकेल. ✅");
+                } else {
+                    alert("त्रुटी: " + result.message + " ❌");
+                }
+            } catch (e) {
+                alert("सर्व्हरशी संपर्क होऊ शकला नाही. 🌐❌");
+            }
+            showLoading(false);
+        }
+
+        async function rejectEntry(entryId) {
+            if(!confirm("तुम्हाला खात्री आहे का की ही माहिती डिलीट (Reject) करायची आहे? ⚠️")) return;
+            
+            let payload = { action: "reject", rowId: String(entryId) };
+            showLoading(true);
+            try {
+                let response = await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
+                let result = await response.json();
+                if(result.status === "success") {
+                    dbData = dbData.filter(d => String(d.id) !== String(entryId));
+                    renderCrcTable();
+                    alert("माहिती यशस्वीरित्या डिलीट केली गेली. 🗑️");
+                } else {
+                    alert("त्रुटी: " + result.message + " ❌");
+                }
+            } catch (e) {
+                alert("सर्व्हरशी संपर्क होऊ शकला नाही. 🌐❌");
             }
             showLoading(false);
         }
 
         async function updateSettingsInAPI(settingsType) {
             let payload = { action: "updateSettings" };
-            if (settingsType === 'lock') {
-                payload.lockedMonths = lockedMonthsArray;
-            } else if (settingsType === 'activeMonth') {
-                payload.activeMonth = globalActiveMonth;
-            }
+            if (settingsType === 'lock') payload.lockedMonths = lockedMonthsArray;
+            else if (settingsType === 'activeMonth') payload.activeMonth = globalActiveMonth;
 
             showLoading(true);
             try {
                 await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
             } catch (e) {
-                console.error("Settings Update Error:", e);
-                alert("सेटिंग्ज जतन करताना त्रुटी आली.");
+                alert("सेटिंग्ज जतन करताना त्रुटी आली. ❌");
             }
             showLoading(false);
         }
@@ -459,10 +565,7 @@
                 document.getElementById('schoolLoginError').style.display = 'none';
                 
                 fetchDataFromAPI(() => { 
-                    // Force the form month to the active month set by CRC
-                    if(globalActiveMonth) {
-                        document.getElementById('formMonth').value = globalActiveMonth;
-                    }
+                    if(globalActiveMonth) document.getElementById('formMonth').value = globalActiveMonth;
                     showSection('schoolForm'); 
                     checkDuplicateEntry();
                 });
@@ -477,21 +580,33 @@
             let year = document.getElementById('formYear').value;
             let month = document.getElementById('formMonth').value;
             
-            // 1. Check if CRC has locked this month
             let monthKey = `${year}-${month}`;
+            let existingEntry = dbData.find(d => d.udise === currentSchool.udise && String(d.year) === String(year) && d.month === month);
+            
+            document.getElementById('duplicateEntryAlert').style.display = 'none';
+            document.getElementById('editRequestAlert').style.display = 'none';
+            document.getElementById('btnRequestEdit').style.display = 'none';
+            document.getElementById('btnPreview').style.display = 'block';
+            
             if(lockedMonthsArray.includes(monthKey)) {
-                disableForm(`CRC ने ${month} ${year} महिन्याची माहिती लॉक केली आहे.`);
+                disableForm(`प्रशासनाने ${month} ${year} महिन्याची माहिती लॉक केली आहे. 🔒`);
+                document.getElementById('btnPreview').style.display = 'none';
                 return;
             }
 
-            // 2. Check if this school has already submitted for this month/year
-            let existingEntry = dbData.find(d => d.udise === currentSchool.udise && d.year == year && d.month === month);
-            
             if(existingEntry) {
-                document.getElementById('duplicateEntryAlert').style.display = 'block';
-                document.getElementById('dataEntryFields').style.opacity = '0.5';
-                document.getElementById('dataEntryFields').style.pointerEvents = 'none'; // Disable interactions
-                // Pre-fill data to show what they submitted
+                currentEntryId = existingEntry.id;
+                
+                if(existingEntry.editRequest) {
+                    document.getElementById('editRequestAlert').style.display = 'block';
+                } else {
+                    document.getElementById('duplicateEntryAlert').style.display = 'block';
+                    document.getElementById('btnRequestEdit').style.display = 'block';
+                }
+                
+                disableForm(""); // Just disable fields
+                document.getElementById('btnPreview').style.display = 'none';
+                
                 document.getElementById('formMobile').value = existingEntry.mobile;
                 document.getElementById('formPendingPrev').value = existingEntry.pendingPrev;
                 document.getElementById('formBonafide').value = existingEntry.bonafide;
@@ -499,8 +614,8 @@
                 document.getElementById('formTc').value = existingEntry.tc;
                 document.getElementById('formPendingEnd').value = existingEntry.pendingEnd;
             } else {
+                currentEntryId = null;
                 enableForm();
-                // Clear previous inputs if it's a new entry
                 document.getElementById('formMobile').value = "";
                 document.getElementById('formPendingPrev').value = "0";
                 document.getElementById('formBonafide').value = "0";
@@ -511,22 +626,32 @@
         }
 
         function disableForm(message) {
-            document.getElementById('duplicateEntryAlert').innerHTML = `<strong>सूचना:</strong> ${message}`;
-            document.getElementById('duplicateEntryAlert').style.display = 'block';
-            document.getElementById('dataEntryFields').style.opacity = '0.5';
-            document.getElementById('dataEntryFields').style.pointerEvents = 'none';
+            if(message) {
+                document.getElementById('duplicateEntryAlert').innerHTML = `<strong>⚠️ सूचना:</strong> ${message}`;
+                document.getElementById('duplicateEntryAlert').style.display = 'block';
+            }
+            // We don't change opacity to 0.5 anymore so they can read what they submitted easily
+            document.getElementById('formMobile').disabled = true;
+            document.getElementById('formPendingPrev').disabled = true;
+            document.getElementById('formBonafide').disabled = true;
+            document.getElementById('formMarklist').disabled = true;
+            document.getElementById('formTc').disabled = true;
+            document.getElementById('formPendingEnd').disabled = true;
         }
 
         function enableForm() {
-            document.getElementById('duplicateEntryAlert').style.display = 'none';
-            document.getElementById('dataEntryFields').style.opacity = '1';
-            document.getElementById('dataEntryFields').style.pointerEvents = 'auto';
+            document.getElementById('formMobile').disabled = false;
+            document.getElementById('formPendingPrev').disabled = false;
+            document.getElementById('formBonafide').disabled = false;
+            document.getElementById('formMarklist').disabled = false;
+            document.getElementById('formTc').disabled = false;
+            document.getElementById('formPendingEnd').disabled = false;
         }
 
         function validateForm() {
             let mobile = document.getElementById('formMobile').value;
             if(!mobile || mobile.length !== 10) {
-                alert("कृपया 10 अंकी वैध मोबाईल नंबर टाका.");
+                alert("कृपया 10 अंकी वैध मोबाईल नंबर टाका. 📱");
                 return false;
             }
             return true;
@@ -538,13 +663,15 @@
             let year = document.getElementById('formYear').value;
             let month = document.getElementById('formMonth').value;
             
-            let html = `<b>महिना व वर्ष:</b> ${month} ${year}<br>
-                        <b>मोबाईल:</b> ${document.getElementById('formMobile').value}<br>
-                        <b>मागील प्रलंबित:</b> ${document.getElementById('formPendingPrev').value}<br>
-                        <b>Bonafide:</b> ${document.getElementById('formBonafide').value} | 
-                        <b>Marklist:</b> ${document.getElementById('formMarklist').value} | 
-                        <b>TC:</b> ${document.getElementById('formTc').value}<br>
-                        <b>शेवटी प्रलंबित:</b> ${document.getElementById('formPendingEnd').value}`;
+            let html = `<table style="width:100%; text-align:left; border:none; background:transparent;">
+                            <tr><td style="padding:5px; border:none;"><b>📅 वर्ष व महिना:</b></td><td style="padding:5px; border:none;">${month} ${year}</td></tr>
+                            <tr><td style="padding:5px; border:none;"><b>📱 मोबाईल नंबर:</b></td><td style="padding:5px; border:none;">${document.getElementById('formMobile').value}</td></tr>
+                            <tr><td style="padding:5px; border:none;"><b>⏳ मागील प्रलंबित:</b></td><td style="padding:5px; border:none; color:#dc3545; font-weight:bold;">${document.getElementById('formPendingPrev').value}</td></tr>
+                            <tr><td style="padding:5px; border:none;"><b>📜 Bonafide:</b></td><td style="padding:5px; border:none; color:#28a745; font-weight:bold;">${document.getElementById('formBonafide').value}</td></tr>
+                            <tr><td style="padding:5px; border:none;"><b>📄 Marklist:</b></td><td style="padding:5px; border:none; color:#28a745; font-weight:bold;">${document.getElementById('formMarklist').value}</td></tr>
+                            <tr><td style="padding:5px; border:none;"><b>🚪 TC:</b></td><td style="padding:5px; border:none; color:#28a745; font-weight:bold;">${document.getElementById('formTc').value}</td></tr>
+                            <tr><td style="padding:5px; border:none;"><b>📌 शेवटी प्रलंबित:</b></td><td style="padding:5px; border:none; color:#dc3545; font-weight:bold;">${document.getElementById('formPendingEnd').value}</td></tr>
+                        </table>`;
             document.getElementById('previewText').innerHTML = html;
             document.getElementById('previewArea').style.display = 'block';
         }
@@ -557,10 +684,7 @@
                 document.getElementById('crcLoginError').style.display = 'none';
                 showSection('crcDashboard');
                 fetchDataFromAPI(() => {
-                    // Start live sync every 15 seconds when in dashboard
-                    syncInterval = setInterval(() => {
-                        fetchDataFromAPI();
-                    }, 15000); 
+                    syncInterval = setInterval(() => { fetchDataFromAPI(); }, 15000); 
                 });
             } else {
                 document.getElementById('crcLoginError').style.display = 'block';
@@ -572,12 +696,11 @@
             globalActiveMonth = selectedMonth;
             updateSettingsInAPI('activeMonth');
             updateCrcDashboardUI();
-            alert(`शाळांसाठी माहिती भरण्याचा महिना "${selectedMonth}" सेट केला आहे.`);
         }
 
         function updateCrcDashboardUI() {
             if(globalActiveMonth) {
-                document.getElementById('currentActiveMonthDisplay').innerText = `चालू महिना (शाळांसाठी): ${globalActiveMonth}`;
+                document.getElementById('currentActiveMonthDisplay').innerText = `चालू महिना: ${globalActiveMonth}`;
                 document.getElementById('activeMonthSelect').value = globalActiveMonth;
             }
             renderCrcTable();
@@ -595,55 +718,71 @@
             let lockBtn = document.getElementById('btnLockMonth');
             if(fMonth !== 'सर्व') {
                 lockBtn.style.display = 'inline-block';
-                lockBtn.innerText = isLocked ? "महिना Unlock करा" : "हा महिना Lock करा";
-                lockBtn.style.backgroundColor = isLocked ? "#ffc107" : "#dc3545";
+                lockBtn.innerText = isLocked ? "महिना Unlock करा 🔓" : "महिना Lock करा 🔒";
+                lockBtn.style.backgroundColor = isLocked ? "#dc3545" : "#ffc107";
+                lockBtn.style.color = isLocked ? "white" : "black";
             } else {
                 lockBtn.style.display = 'none';
             }
 
-            // Create a list of all schools and match submitted data
             let totalSchoolsCount = Object.keys(schoolsDB).length;
             let submittedCount = 0;
-
-            // Sort schools by UDISE for consistent display
             let sortedUdise = Object.keys(schoolsDB).sort();
 
             sortedUdise.forEach(udise => {
                 let schoolName = schoolsDB[udise];
-                
-                // Find if this school submitted data for the filtered month/year
-                // If filter is "सर्व", we just show all submissions and skip progress tracking for specific month
-                let submissionsForSchool = dbData.filter(d => d.udise === udise && String(d.year) === String(fYear) && (fMonth === 'सर्व' || d.month === fMonth));
+                let submissionsForSchool = dbData.filter(d => d.udise === String(udise) && String(d.year) === String(fYear) && (fMonth === 'सर्व' || d.month === fMonth));
 
                 if(submissionsForSchool.length > 0) {
                     submissionsForSchool.forEach(d => {
                         submittedCount++;
-                        let status = isLocked ? `<span class="status-badge status-locked">Locked</span>` : `<span class="status-badge status-submitted">Submitted</span>`;
+                        let statusHtml = '';
+                        let actionHtml = '';
+
+                        if (isLocked) {
+                            statusHtml = `<span class="status-badge status-locked">🔒 Locked</span>`;
+                            actionHtml = `<span style="font-size:12px; color:#999;">-</span>`;
+                        } else if (d.editRequest) {
+                            statusHtml = `<span class="status-badge status-requested">📩 Edit Requested</span>`;
+                            actionHtml = `
+                                <button class="btn-success" style="padding: 4px 8px; font-size: 12px; width:auto; margin:2px;" onclick="approveEditRequest('${d.id}')" title="विनंती स्वीकारून जुना डेटा डिलीट करा">✔ Approve</button>
+                                <button class="btn-danger" style="padding: 4px 8px; font-size: 12px; width:auto; margin:2px;" onclick="rejectEntry('${d.id}')" title="डिलीट करा">✖ Reject</button>
+                            `;
+                        } else {
+                            statusHtml = `<span class="status-badge status-submitted">✅ Submitted</span>`;
+                            actionHtml = `<button class="btn-danger" style="padding: 4px 8px; font-size: 12px; width:auto;" onclick="rejectEntry('${d.id}')" title="डिलीट करा">✖ Reject</button>`;
+                        }
+                        
                         let row = `<tr>
-                            <td>${d.udise}</td><td>${d.schoolName}</td><td>${d.year}</td><td>${d.month}</td>
-                            <td>${d.mobile}</td><td>${d.pendingPrev}</td><td>${d.bonafide}</td>
-                            <td>${d.marklist}</td><td>${d.tc}</td><td>${d.pendingEnd}</td>
-                            <td>${status}</td>
+                            <td style="font-size:12px;">${d.udise}</td>
+                            <td style="font-size:12px; text-align:left;"><b>${d.schoolName}</b></td>
+                            <td>${d.month}</td>
+                            <td style="font-size:12px;">${d.mobile}</td>
+                            <td>${d.pendingPrev}</td>
+                            <td style="color:#28a745; font-weight:bold;">${d.bonafide}</td>
+                            <td style="color:#28a745; font-weight:bold;">${d.marklist}</td>
+                            <td style="color:#28a745; font-weight:bold;">${d.tc}</td>
+                            <td style="color:#dc3545; font-weight:bold;">${d.pendingEnd}</td>
+                            <td>${statusHtml}</td>
+                            <td>${actionHtml}</td>
                         </tr>`;
                         tbody.innerHTML += row;
                     });
                 } else if (fMonth !== 'सर्व') {
-                    // Show pending status if a specific month is selected and school hasn't submitted
-                    let row = `<tr style="background-color: #fffaf0;">
-                        <td>${udise}</td><td>${schoolName}</td><td>${fYear}</td><td>${fMonth}</td>
-                        <td>-</td><td>-</td><td>-</td>
-                        <td>-</td><td>-</td><td>-</td>
-                        <td><span class="status-badge status-pending">Pending</span></td>
+                    let row = `<tr style="background-color: #fffaf0; opacity: 0.7;">
+                        <td style="font-size:12px;">${udise}</td><td style="font-size:12px; text-align:left;">${schoolName}</td><td>${fMonth}</td>
+                        <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+                        <td><span class="status-badge status-pending">⏳ Pending</span></td>
+                        <td>-</td>
                     </tr>`;
                     tbody.innerHTML += row;
                 }
             });
 
             if(tbody.innerHTML === '' && fMonth === 'सर्व') {
-                 tbody.innerHTML = `<tr><td colspan="11">कोणतीही माहिती उपलब्ध नाही.</td></tr>`;
+                 tbody.innerHTML = `<tr><td colspan="11" style="padding: 30px; color: #777;">कोणतीही माहिती उपलब्ध नाही. 🚫</td></tr>`;
             }
 
-            // Update Progress UI (Only makes sense when a specific month is selected)
             if(fMonth !== 'सर्व') {
                 document.getElementById('totalSchoolsProgress').innerText = totalSchoolsCount;
                 document.getElementById('submittedSchoolsProgress').innerText = submittedCount;
@@ -664,21 +803,22 @@
             let index = lockedMonthsArray.indexOf(key);
             
             if(index > -1) {
-                lockedMonthsArray.splice(index, 1); // Unlock
-                alert(`${month} ${year} अनलॉक केला गेला आहे.`);
+                lockedMonthsArray.splice(index, 1); 
             } else {
-                lockedMonthsArray.push(key); // Lock
-                alert(`${month} ${year} लॉक केला गेला आहे.`);
+                lockedMonthsArray.push(key); 
             }
             
             updateSettingsInAPI('lock');
             renderCrcTable();
         }
 
-        // --- Export Functions ---
+        // --- Export & Share Functions ---
         function exportExcel() {
-            let table = document.getElementById("crcDataTable");
-            let wb = XLSX.utils.table_to_book(table, {sheet:"Sheet1"});
+            let table = document.getElementById("crcDataTable").cloneNode(true);
+            for (let i = 0; i < table.rows.length; i++) {
+                table.rows[i].deleteCell(-1); 
+            }
+            let wb = XLSX.utils.table_to_book(table, {sheet:"Report"});
             XLSX.writeFile(wb, "Lokseva_Report.xlsx");
         }
 
@@ -686,8 +826,34 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             doc.text("Lokseva Hakka Mahiti - Report", 14, 15);
-            doc.autoTable({ html: '#crcDataTable', startY: 20, theme: 'grid', styles: { font: 'helvetica', fontSize: 8 } });
+            
+            doc.autoTable({ 
+                html: '#crcDataTable', 
+                startY: 20, 
+                theme: 'grid', 
+                styles: { font: 'helvetica', fontSize: 8 },
+                columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] 
+            });
             doc.save("Lokseva_Report.pdf");
+        }
+
+        async function shareReport() {
+            let fMonth = document.getElementById('filterMonth').value;
+            let fYear = document.getElementById('filterYear').value;
+            
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'लोकसेवा हक्क माहिती अहवाल 📊',
+                        text: `${fMonth} ${fYear} चा लोकसेवा हक्क माहिती अहवाल पोर्टलवर उपलब्ध आहे. कृपया तपासा.`,
+                        url: window.location.href
+                    });
+                } catch (err) {
+                    console.log('Share canceled or failed.', err);
+                }
+            } else {
+                alert("तुमच्या ब्राउझरमध्ये शेअर सुविधा उपलब्ध नाही. कृपया PDF किंवा Excel डाउनलोड करून शेअर करा. 📤");
+            }
         }
     </script>
 </body>
