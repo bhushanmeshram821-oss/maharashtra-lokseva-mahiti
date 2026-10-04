@@ -176,7 +176,7 @@
                     </div>
                 </div>
                 
-                <div class="form-card"><label>मोबाईल नंबर</label><input type="number" id="formMobile"></div>
+                <div class="form-card"><label>मोबाईल नंबर</label><input type="number" id="formMobile" placeholder="१० अंकी मोबाईल नंबर टाका" maxlength="10"></div>
                 <div class="form-card"><label>A) मागील प्रलंबित</label><input type="number" id="formPendingPrev" value="0"></div>
                 <div class="form-card">
                     <label>या महिन्यात दिलेले दाखले:</label>
@@ -287,7 +287,7 @@
                 </div>
 
                 <div class="export-btn-group">
-                    <button onclick="directPrint('exportTableElement', 'printHeader')" class="export-btn btn-print">🖨️ Print</button>
+                    <button onclick="directPrint('exportTableElement', 'printHeader')" class="export-btn btn-print">🖨️️ Print</button>
                     <button onclick="downloadExcelFile('exportTableElement', 'filterMonth', 'filterYear')" class="export-btn btn-excel">📥 Excel</button>
                     <button onclick="downloadWordFile('exportTableElement', 'printHeader', 'filterMonth', 'filterYear')" class="export-btn btn-word">📝 Word</button>
                     <button onclick="downloadPDFFile('exportTableElement', 'printHeader', 'filterMonth', 'filterYear')" class="export-btn btn-pdf">📄 PDF</button>
@@ -596,7 +596,6 @@
             updateDashboards();
         }
 
-        // Updated School Login with Pre-fill Support
         function loginSchool() {
             let udise = document.getElementById('loginUdise').value.trim();
             if(schoolsDB[udise]) {
@@ -651,11 +650,19 @@
         }
 
         async function submitDataToAPI() {
+            // मोबाईल नंबर १० अंकी असल्याची पडताळणी (Validation)
+            let mobileVal = document.getElementById('formMobile').value.trim();
+            if(mobileVal.length !== 10 || isNaN(mobileVal)) {
+                alert("कृपया १० अंकी वैध मोबाईल नंबर प्रविष्ट करा!");
+                document.getElementById('formMobile').focus();
+                return;
+            }
+
             let entry = {
                 id: Date.now().toString(), udise: currentSchool.udise, schoolName: currentSchool.name,
                 year: document.getElementById('formYear').value, 
                 month: document.getElementById('formMonth').value, 
-                mobile: document.getElementById('formMobile').value, pendingPrev: document.getElementById('formPendingPrev').value || 0,
+                mobile: mobileVal, pendingPrev: document.getElementById('formPendingPrev').value || 0,
                 bonafide: document.getElementById('formBonafide').value || 0, marklist: document.getElementById('formMarklist').value || 0,
                 tc: document.getElementById('formTc').value || 0, pendingEnd: document.getElementById('formPendingEnd').value || 0
             };
@@ -1079,18 +1086,18 @@
                 image:        { type: 'jpeg', quality: 1 },
                 html2canvas:  { scale: 2, useCORS: true, windowWidth: 1150 }, 
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
-            };
+          };
 
-            html2pdf().set(opt).from(pdfContainer).save().then(() => {
+          html2pdf().set(opt).from(pdfContainer).save().then(() => {
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('loaderText').innerText = "कृपया प्रतीक्षा करा...";
                 syncInterval = setInterval(() => { fetchDataFromAPI(null, false); }, 10000);
-            }).catch(err => {
+          }).catch(err => {
                 console.error("PDF Error:", err);
                 alert("PDF तयार करताना काही अडचण आली.");
                 document.getElementById('loader').style.display = 'none';
                 syncInterval = setInterval(() => { fetchDataFromAPI(null, false); }, 10000);
-            });
+          });
         }
     </script>
 </body>
